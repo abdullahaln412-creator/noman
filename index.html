@@ -1,1 +1,728 @@
-<h1>my portfolio</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abdullah Al Noman | Civil Engineering Portfolio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+/* ============================
+   RESET & BASE
+   ============================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(135deg, #f5efe6, #efe4d2, #f8f4ed);
+  color: #333;
+}
+
+/* ============================
+   ANIMATIONS (defined once, reused everywhere)
+   ============================ */
+@keyframes gradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulseScale {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+  70%  { box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+/* ============================
+   NAVIGATION
+   ============================ */
+nav {
+  background: #0f172a;
+  padding: 15px 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav h2 {
+  color: white;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.logo {
+  font-size: 40px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-decoration: none;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.logo:hover {
+  color: #60a5fa;
+  transform: scale(1.08);
+}
+
+/* ============================
+   HAMBURGER MENU (top-left, separate from main nav)
+   ============================ */
+.menu-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 99999;
+}
+
+.menu-btn {
+  background: #0a1931;
+  color: white;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: block;
+}
+
+.menu-content {
+  display: none;
+  position: absolute;
+  background: linear-gradient(135deg, #0a1931, #185adb);
+  min-width: 220px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.menu-content.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.menu-content a {
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+}
+
+.menu-content a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  padding-left: 20px;
+  transition: 0.3s;
+}
+
+.submenu {
+  position: relative;
+}
+
+.submenu-content {
+  display: none;
+  position: absolute;
+  left: 220px;
+  top: 0;
+  background: linear-gradient(135deg, #185adb, #0a1931);
+  min-width: 220px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.submenu-content.active {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ============================
+   HERO SECTION
+   ============================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 10%;
+  gap: 50px;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+}
+
+.hero img {
+  width: 320px;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid white;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.hero-text {
+  max-width: 600px;
+}
+
+.hero-text h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.hero-text h3 {
+  color: #94a3b8;
+  margin-bottom: 20px;
+}
+
+#typing-text {
+  color: #bfc7d5;
+  min-height: 40px;
+  max-width: 400px;
+  width: 100%;
+  display: inline-block;
+  text-align: left;
+  transition: opacity 0.5s ease;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-right: 10px;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  animation: pulseScale 2s infinite;
+}
+
+.btn:hover {
+  transform: translateY(-6px) scale(1.1);
+  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.5);
+}
+
+/* ============================
+   SHARED SECTION STYLES
+   ============================ */
+section {
+  padding: 80px 10%;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2rem;
+  color: #0f172a;
+}
+
+.about,
+.education,
+.experience {
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.about p {
+  font-size: 22px;
+}
+
+/* Scroll-reveal effect, toggled via IntersectionObserver in JS */
+.hidden {
+  opacity: 0;
+  transform: translateY(100px) scale(0.95);
+  filter: blur(5px);
+  transition: all 1.2s ease;
+}
+
+.hidden.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* ============================
+   SKILLS
+   ============================ */
+.skills-section {
+  background-size: 300% 300%;
+  animation: gradientMove 12s ease infinite;
+  border-radius: 25px;
+  margin: 40px 0;
+  padding: 80px 40px;
+}
+
+.skills-section .section-title {
+  color: #0f172a !important;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.skill {
+  background: linear-gradient(135deg, #0f172a, #1e293b, #334155, #0f172a);
+  background-size: 300% 300%;
+  animation: gradientMove 10s ease infinite;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.skill:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================
+   CARDS (Education / Experience / Projects)
+   ============================ */
+.card {
+  background: linear-gradient(135deg, #111827, #1f2937, #0f172a, #1f2937);
+  background-size: 300% 300%;
+  animation: gradientMove 10s ease infinite;
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+  transition: all 0.4s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================
+   CONTACT
+   ============================ */
+.contact {
+  max-width: 700px;
+  margin: auto;
+  padding: 40px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: white;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
+}
+
+.contact:hover {
+  transform: translateY(-15px) scale(1.04);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+
+.contact a {
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.contact a:hover {
+  color: #ffeaa7 !important;
+  transform: scale(1.1);
+  display: inline-block;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+  margin-top: 30px;
+}
+
+.social-icons a {
+  font-size: 70px;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  transform: translateY(-8px) scale(1.2);
+}
+
+/* Brand colors */
+.email     { color: #EA4335 !important; }
+.linkedin  { color: #0A66C2 !important; }
+.github    { color: #58A6FF !important; }
+.instagram { color: #E4405F !important; }
+.facebook  { color: #1877F2 !important; }
+
+/* ============================
+   WHATSAPP FLOATING BUTTON
+   ============================ */
+.whatsapp-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 55px;
+  height: 55px;
+  background: #25D366;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  text-decoration: none;
+  z-index: 999;
+  box-shadow: 0 0 20px rgba(37, 211, 102, 0.6);
+  transition: 0.3s;
+  animation: pulseGlow 2s infinite;
+}
+
+.whatsapp-btn:hover {
+  transform: scale(1.15);
+}
+
+/* ============================
+   FOOTER
+   ============================ */
+footer {
+  background: #0f172a;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+@media (max-width: 768px) {
+  .logo {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  nav {
+    flex-direction: column;
+    padding: 15px 5%;
+  }
+
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  nav a {
+    font-size: 14px;
+  }
+
+  .hero {
+    text-align: center;
+    padding-top: 0;
+  }
+
+  .hero-text {
+    margin-top: -50px;
+  }
+
+  .hero-text h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero img {
+    width: 200px;
+    height: 200px;
+    margin-top: -170px;
+  }
+
+  #typing-text {
+    text-align: center;
+  }
+
+  .social-icons {
+    gap: 20px;
+  }
+
+  .social-icons a {
+    font-size: 45px;
+  }
+
+  .card {
+    transition: all 0.4s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-10px);
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Hamburger menu: quick access to past semester resources -->
+<div class="menu-container">
+  <button class="menu-btn" id="menuBtn" aria-label="Open academic resources menu">☰</button>
+
+  <div class="menu-content" id="menuContent">
+    <div class="submenu" id="academicSubmenu">
+      <a href="#" id="submenuToggle">Academic Resources ▸</a>
+
+      <div class="submenu-content" id="submenuContent">
+        <a href="semester1.html">Semester 1</a>
+        <a href="semester2.html">Semester 2</a>
+        <a href="semester3.html">Semester 3</a>
+        <a href="semester4.html">Semester 4</a>
+        <a href="semester5.html">Semester 5</a>
+        <a href="semester6.html">Semester 6</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <a href="index.html" class="logo">ABDULLAH</a>
+
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>ABDULLAH AL NOMAN</h1>
+    <h3 id="typing-text"></h3>
+
+    <p>
+      Passionate about structural engineering, infrastructure
+      development and modern construction technologies.
+    </p>
+
+    <a class="btn" href="#contact">Contact Me</a>
+    <a class="btn" href="Abdullah_Al_Noman_CV.pdf" download>Download CV</a>
+    <a class="btn" href="https://www.linkedin.com/in/abdullah-noman78/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+  </div>
+
+  <div>
+    <img src="profile.jpg" alt="Abdullah Al Noman">
+  </div>
+</section>
+
+<section id="about" class="hidden">
+  <h2 class="section-title">About Me</h2>
+
+  <div class="about">
+    <p>
+      I am Abdullah Al Noman, a Civil Engineering student at
+      Southwest Petroleum University. I am expected to graduate
+      in July 2027.
+    </p>
+
+    <br>
+
+    <p>
+      I am interested in structural design, engineering software,
+      infrastructure projects, and sustainable construction solutions.
+    </p>
+  </div>
+</section>
+
+<section id="skills" class="skills-section hidden">
+  <h2 class="section-title">Technical Skills</h2>
+
+  <div class="skills-grid">
+    <div class="skill">AutoCAD</div>
+    <div class="skill">Revit</div>
+    <div class="skill">SAP2000</div>
+    <div class="skill">ETABS</div>
+    <div class="skill">Adobe Photoshop</div>
+    <div class="skill">Microsoft Office</div>
+  </div>
+</section>
+
+<section id="education" class="hidden">
+  <h2 class="section-title">Education</h2>
+
+  <div class="card">
+    <h3>Southwest Petroleum University</h3>
+    <p>Bachelor of Civil Engineering</p>
+    <p>Expected Graduation: July 2027</p>
+  </div>
+</section>
+
+<section id="experience" class="hidden">
+  <h2 class="section-title">Professional Experience</h2>
+
+  <div class="card">
+    <h3>TikTok Agency Manager / Agent</h3>
+    <p>
+      Managing creators, coordinating operations, handling
+      communication, and supporting creator growth and performance.
+    </p>
+  </div>
+</section>
+
+<section id="projects">
+  <h2 class="section-title">Academic Projects</h2>
+
+  <div class="card">
+    <h3>Engineering Class Projects</h3>
+    <p>
+      Completed coursework involving engineering drawings,
+      structural calculations, AutoCAD exercises and academic
+      design assignments.
+    </p>
+  </div>
+</section>
+
+<section id="contact" class="hidden">
+  <h2 class="section-title">Contact</h2>
+
+  <div class="contact">
+    <p><strong>ABDULLAH AL NOMAN</strong></p>
+
+    <div class="social-icons">
+      <a href="mailto:alabdullahnoman1@gmail.com" class="email" aria-label="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+      <a href="https://linkedin.com/in/abdullah-noman78" target="_blank" class="linkedin" aria-label="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+      </a>
+      <a href="https://github.com/abdullahaln412-creator" target="_blank" class="github" aria-label="GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.instagram.com/iamrumance/" target="_blank" class="instagram" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://www.facebook.com/ruman.sheikh78626" target="_blank" class="facebook" aria-label="Facebook">
+        <i class="fab fa-facebook"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 Abdullah Al Noman | Civil Engineering Portfolio</p>
+</footer>
+
+<a href="https://wa.me/8801780180088" class="whatsapp-btn" target="_blank" aria-label="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+/* ============================
+   SCROLL REVEAL
+   ============================ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('show');
+    } else {
+      entry.target.classList.remove('show');
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.hidden').forEach((el) => observer.observe(el));
+
+/* ============================
+   TYPING ANIMATION
+   ============================ */
+const texts = [
+  "Civil Engineering Student",
+  "Structural Engineering Enthusiast",
+  "AutoCAD • Revit • ETABS",
+  "Future Master's Researcher"
+];
+
+const typingText = document.getElementById("typing-text");
+let textIndex = 0;
+
+function changeText() {
+  typingText.style.opacity = "0";
+
+  setTimeout(() => {
+    typingText.textContent = texts[textIndex];
+    typingText.style.opacity = "1";
+    textIndex = (textIndex + 1) % texts.length;
+  }, 500);
+}
+
+typingText.textContent = texts[0];
+setInterval(changeText, 3000);
+
+/* ============================
+   HAMBURGER MENU + SUBMENU
+   ============================ */
+const menuBtn = document.getElementById("menuBtn");
+const menuContent = document.getElementById("menuContent");
+const submenuToggle = document.getElementById("submenuToggle");
+const submenuContent = document.getElementById("submenuContent");
+
+menuBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  menuContent.classList.toggle("active");
+  // Close submenu whenever the main menu is toggled shut/open fresh
+  submenuContent.classList.remove("active");
+});
+
+submenuToggle.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  submenuContent.classList.toggle("active");
+});
+
+document.addEventListener("click", (e) => {
+  const clickedInsideMenu = menuContent.contains(e.target) || e.target === menuBtn;
+  if (!clickedInsideMenu) {
+    menuContent.classList.remove("active");
+    submenuContent.classList.remove("active");
+  }
+});
+</script>
+
+</body>
+</html>
