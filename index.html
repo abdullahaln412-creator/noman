@@ -3,726 +3,825 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abdullah Al Noman | Civil Engineering Portfolio</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<title>ThoughtFlow</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ============================
-   RESET & BASE
-   ============================ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", sans-serif;
-}
-
-html {
-  scroll-behavior: smooth;
+:root {
+  --bg0:      #1e1e1e;
+  --bg1:      #252526;
+  --bg2:      #2d2d30;
+  --bg3:      #3c3c3c;
+  --cyan:     #4ec9b0;
+  --cyan-dim: rgba(78,201,176,0.1);
+  --cyan-bdr: rgba(78,201,176,0.25);
+  --blue:     #569cd6;
+  --text:     #d4d4d4;
+  --text2:    #858585;
+  --text3:    #5a5a5a;
+  --red:      #f44747;
+  --green:    #4ec94e;
+  --amber:    #ce9178;
+  --bdr:      rgba(255,255,255,0.07);
+  --bdr2:     rgba(255,255,255,0.13);
+  --r:        6px;
+  --r2:       10px;
 }
 
 body {
-  background: linear-gradient(135deg, #f5efe6, #efe4d2, #f8f4ed);
-  color: #333;
+  background: var(--bg0);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
-/* ============================
-   ANIMATIONS (defined once, reused everywhere)
-   ============================ */
-@keyframes gradientMove {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes pulseScale {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.05); }
-}
-
-@keyframes pulseGlow {
-  0%   { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-  70%  { box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-}
-
-/* ============================
-   NAVIGATION
-   ============================ */
-nav {
-  background: #0f172a;
-  padding: 15px 10%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-nav h2 {
-  color: white;
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 20px;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--bdr);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 48px;
 }
 
 .logo {
-  font-size: 40px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  text-decoration: none;
-  color: white;
-  font-family: "Poppins", sans-serif;
-  transition: all 0.3s ease;
+  font-size: 15px; font-weight: 600; color: var(--cyan);
+  letter-spacing: 0.2px; display: flex; align-items: center; gap: 8px;
 }
 
-.logo:hover {
-  color: #60a5fa;
-  transform: scale(1.08);
+.logo-dot {
+  width: 7px; height: 7px;
+  background: var(--cyan); border-radius: 50%;
+  animation: blink 2.5s ease-in-out infinite;
 }
 
-/* ============================
-   HAMBURGER MENU (top-left, separate from main nav)
-   ============================ */
-.menu-container {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 99999;
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+
+/* ── BUTTONS ── */
+.btn {
+  border: none; border-radius: var(--r);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer; padding: 6px 14px;
+  transition: background 0.15s, color 0.15s, opacity 0.15s;
+  line-height: 1;
 }
 
-.menu-btn {
-  background: #0a1931;
-  color: white;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  display: block;
+.btn-outline {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--bdr2);
+}
+.btn-outline:hover { background: var(--bg2); color: var(--text); }
+
+.btn-cyan {
+  background: var(--cyan); color: #0d1a17; font-weight: 600;
+}
+.btn-cyan:hover { opacity: 0.88; }
+
+.btn-danger {
+  background: transparent; color: var(--red);
+  border: 1px solid rgba(244,71,71,0.3);
+}
+.btn-danger:hover { background: rgba(244,71,71,0.08); }
+
+/* ── PAGE ── */
+.page { max-width: 620px; margin: 0 auto; padding: 24px 16px 80px; }
+
+/* ── COMPOSE ── */
+.compose-wrap {
+  background: var(--bg1);
+  border: 1px solid var(--bdr);
+  border-radius: var(--r2);
+  padding: 16px;
+  margin-bottom: 24px;
 }
 
-.menu-content {
-  display: none;
-  position: absolute;
-  background: linear-gradient(135deg, #0a1931, #185adb);
-  min-width: 220px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-}
-
-.menu-content.active {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.menu-content a {
-  display: block;
-  padding: 12px;
-  text-decoration: none;
-  color: white;
-  font-weight: 600;
-}
-
-.menu-content a:hover {
-  background: rgba(255, 255, 255, 0.15);
-  padding-left: 20px;
-  transition: 0.3s;
-}
-
-.submenu {
-  position: relative;
-}
-
-.submenu-content {
-  display: none;
-  position: absolute;
-  left: 220px;
-  top: 0;
-  background: linear-gradient(135deg, #185adb, #0a1931);
-  min-width: 220px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.3s ease;
-}
-
-.submenu-content.active {
-  display: block;
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* ============================
-   HERO SECTION
-   ============================ */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 50px 10%;
-  gap: 50px;
-  flex-wrap: wrap;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-}
-
-.hero img {
-  width: 320px;
-  height: 320px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 5px solid white;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-}
-
-.hero-text {
-  max-width: 600px;
-}
-
-.hero-text h1 {
-  font-size: 3rem;
+.compose-top {
+  display: flex; align-items: center; gap: 8px;
   margin-bottom: 10px;
 }
 
-.hero-text h3 {
-  color: #94a3b8;
-  margin-bottom: 20px;
+.anon-pill {
+  font-size: 11px; color: var(--cyan);
+  background: var(--cyan-dim); border: 1px solid var(--cyan-bdr);
+  border-radius: 20px; padding: 2px 10px;
+  display: flex; align-items: center; gap: 5px;
 }
 
-#typing-text {
-  color: #bfc7d5;
-  min-height: 40px;
-  max-width: 400px;
-  width: 100%;
-  display: inline-block;
-  text-align: left;
-  transition: opacity 0.5s ease;
+.anon-pill::before {
+  content: ''; width: 5px; height: 5px;
+  background: var(--cyan); border-radius: 50%;
 }
 
-.btn {
-  display: inline-block;
-  padding: 12px 24px;
-  background: #2563eb;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  margin-right: 10px;
-  margin-top: 15px;
-  transition: all 0.3s ease;
-  animation: pulseScale 2s infinite;
+.compose-hint { font-size: 11px; color: var(--text3); margin-left: auto; }
+
+textarea {
+  width: 100%; background: var(--bg2);
+  border: 1px solid var(--bdr); border-radius: var(--r);
+  color: var(--text); font-family: inherit; font-size: 14px;
+  line-height: 1.65; padding: 12px 14px; resize: none;
+  outline: none; min-height: 90px;
+  transition: border-color 0.15s;
+}
+textarea:focus { border-color: var(--cyan-bdr); }
+textarea::placeholder { color: var(--text3); }
+
+.compose-bar {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-top: 10px;
 }
 
-.btn:hover {
-  transform: translateY(-6px) scale(1.1);
-  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.5);
+.char { font-size: 11px; color: var(--text3); }
+.char.warn { color: var(--amber); }
+.char.over { color: var(--red); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 11px; font-weight: 500; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
 }
 
-/* ============================
-   SHARED SECTION STYLES
-   ============================ */
-section {
-  padding: 80px 10%;
+.live-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--green);
 }
 
-.section-title {
-  text-align: center;
-  margin-bottom: 40px;
-  font-size: 2rem;
-  color: #0f172a;
+.live-badge::before {
+  content: ''; width: 5px; height: 5px;
+  background: var(--green); border-radius: 50%;
+  animation: blink 1.8s ease-in-out infinite;
 }
 
-.about,
-.education,
-.experience {
-  max-width: 900px;
-  margin: auto;
-  text-align: center;
-  line-height: 1.8;
-}
-
-.about p {
-  font-size: 22px;
-}
-
-/* Scroll-reveal effect, toggled via IntersectionObserver in JS */
-.hidden {
-  opacity: 0;
-  transform: translateY(100px) scale(0.95);
-  filter: blur(5px);
-  transition: all 1.2s ease;
-}
-
-.hidden.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-}
-
-/* ============================
-   SKILLS
-   ============================ */
-.skills-section {
-  background-size: 300% 300%;
-  animation: gradientMove 12s ease infinite;
-  border-radius: 25px;
-  margin: 40px 0;
-  padding: 80px 40px;
-}
-
-.skills-section .section-title {
-  color: #0f172a !important;
-}
-
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-}
-
-.skill {
-  background: linear-gradient(135deg, #0f172a, #1e293b, #334155, #0f172a);
-  background-size: 300% 300%;
-  animation: gradientMove 10s ease infinite;
-  color: white;
-  padding: 20px;
-  text-align: center;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-  transition: all 0.3s ease;
-}
-
-.skill:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* ============================
-   CARDS (Education / Experience / Projects)
-   ============================ */
+/* ── THOUGHT CARD ── */
 .card {
-  background: linear-gradient(135deg, #111827, #1f2937, #0f172a, #1f2937);
-  background-size: 300% 300%;
-  animation: gradientMove 10s ease infinite;
-  color: white;
-  padding: 25px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  margin-bottom: 20px;
-  transition: all 0.4s ease;
+  background: var(--bg1);
+  border: 1px solid var(--bdr);
+  border-radius: var(--r2);
+  padding: 16px; margin-bottom: 10px;
+  transition: border-color 0.15s;
+  animation: rise 0.3s ease;
+}
+.card:hover { border-color: var(--bdr2); }
+
+@keyframes rise {
+  from { opacity:0; transform: translateY(-6px); }
+  to   { opacity:1; transform: translateY(0); }
 }
 
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+.card-head {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 10px;
 }
 
-/* ============================
-   CONTACT
-   ============================ */
-.contact {
-  max-width: 700px;
-  margin: auto;
-  padding: 40px;
-  border-radius: 20px;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(96, 165, 250, 0.3);
-  color: white;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-  transition: all 0.4s ease;
+.card-tag {
+  font-size: 11px; color: var(--text3);
+  display: flex; align-items: center; gap: 5px;
 }
 
-.contact:hover {
-  transform: translateY(-15px) scale(1.04);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+.card-tag svg { opacity: 0.4; }
+
+.card-time { font-size: 11px; color: var(--text3); }
+
+.card-body {
+  font-size: 14px; color: var(--text);
+  line-height: 1.75; margin-bottom: 14px;
+  word-break: break-word;
 }
 
-.contact a {
-  font-weight: bold;
-  text-decoration: none;
-  transition: all 0.3s ease;
+.card-footer {
+  display: flex; align-items: center; gap: 6px;
+  padding-top: 12px; border-top: 1px solid var(--bdr);
 }
 
-.contact a:hover {
-  color: #ffeaa7 !important;
-  transform: scale(1.1);
-  display: inline-block;
+/* ── REACT BUTTONS ── */
+.rbtn {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--bg2); border: 1px solid var(--bdr);
+  border-radius: 20px; padding: 4px 11px;
+  font-size: 13px; color: var(--text2);
+  cursor: pointer; transition: all 0.15s;
+  font-family: inherit;
+}
+.rbtn:hover { border-color: var(--bdr2); color: var(--text); background: var(--bg3); }
+.rbtn .n { font-size: 12px; font-weight: 500; min-width: 10px; }
+
+.rbtn.on-like    { border-color: rgba(78,201,78,0.4);   background: rgba(78,201,78,0.08);   color: var(--green); }
+.rbtn.on-love    { border-color: rgba(244,71,71,0.4);   background: rgba(244,71,71,0.08);   color: var(--red); }
+.rbtn.on-dislike { border-color: rgba(206,145,120,0.4); background: rgba(206,145,120,0.08); color: var(--amber); }
+
+.donate-btn {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 5px;
+  background: transparent; border: 1px solid var(--cyan-bdr);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 12px; color: var(--cyan);
+  cursor: pointer; transition: all 0.15s;
+  font-family: inherit;
+}
+.donate-btn:hover { background: var(--cyan-dim); }
+
+.owner-mark {
+  font-size: 11px; color: var(--blue);
+  text-align: right; margin-top: 8px; opacity: 0.7;
 }
 
-.social-icons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 35px;
-  margin-top: 30px;
+/* ── EMPTY ── */
+.empty {
+  text-align: center; padding: 60px 20px; color: var(--text3);
 }
+.empty svg { display: block; margin: 0 auto 14px; opacity: 0.2; }
+.empty p { font-size: 13px; line-height: 1.7; }
 
-.social-icons a {
-  font-size: 70px;
-  transition: all 0.3s ease;
-}
-
-.social-icons a:hover {
-  transform: translateY(-8px) scale(1.2);
-}
-
-/* Brand colors */
-.email     { color: #EA4335 !important; }
-.linkedin  { color: #0A66C2 !important; }
-.github    { color: #58A6FF !important; }
-.instagram { color: #E4405F !important; }
-.facebook  { color: #1877F2 !important; }
-
-/* ============================
-   WHATSAPP FLOATING BUTTON
-   ============================ */
-.whatsapp-btn {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 55px;
-  height: 55px;
-  background: #25D366;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  text-decoration: none;
-  z-index: 999;
-  box-shadow: 0 0 20px rgba(37, 211, 102, 0.6);
-  transition: 0.3s;
-  animation: pulseGlow 2s infinite;
-}
-
-.whatsapp-btn:hover {
-  transform: scale(1.15);
-}
-
-/* ============================
-   FOOTER
-   ============================ */
-footer {
-  background: #0f172a;
-  color: white;
-  text-align: center;
+/* ── MODAL BACKDROP ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 200;
+  align-items: center; justify-content: center;
   padding: 20px;
 }
+.modal-bg.show { display: flex; }
 
-/* ============================
-   RESPONSIVE
-   ============================ */
-@media (max-width: 768px) {
-  .logo {
-    font-size: 20px;
-    letter-spacing: 1px;
-  }
-
-  nav {
-    flex-direction: column;
-    padding: 15px 5%;
-  }
-
-  nav ul {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  nav a {
-    font-size: 14px;
-  }
-
-  .hero {
-    text-align: center;
-    padding-top: 0;
-  }
-
-  .hero-text {
-    margin-top: -50px;
-  }
-
-  .hero-text h1 {
-    font-size: 2.2rem;
-  }
-
-  .hero img {
-    width: 200px;
-    height: 200px;
-    margin-top: -170px;
-  }
-
-  #typing-text {
-    text-align: center;
-  }
-
-  .social-icons {
-    gap: 20px;
-  }
-
-  .social-icons a {
-    font-size: 45px;
-  }
-
-  .card {
-    transition: all 0.4s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-10px);
-  }
+/* ── MODAL BOX ── */
+.modal {
+  background: var(--bg1); border: 1px solid var(--bdr2);
+  border-radius: var(--r2); padding: 28px;
+  width: 100%; max-width: 400px;
+  animation: rise 0.2s ease;
 }
 
+.modal h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.modal .sub { font-size: 12px; color: var(--text2); margin-bottom: 20px; }
+
+/* tabs */
+.tabs {
+  display: flex; background: var(--bg2);
+  border-radius: var(--r); padding: 3px; margin-bottom: 18px;
+}
+.tab {
+  flex: 1; text-align: center; padding: 6px;
+  border-radius: 4px; font-size: 13px;
+  cursor: pointer; color: var(--text2);
+  border: none; background: transparent;
+  font-family: inherit; transition: all 0.15s;
+}
+.tab.on { background: var(--bg3); color: var(--cyan); font-weight: 500; }
+
+/* form */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 500;
+  color: var(--text2); margin-bottom: 5px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.field input {
+  width: 100%; background: var(--bg2);
+  border: 1px solid var(--bdr); border-radius: var(--r);
+  color: var(--text); font-family: inherit; font-size: 14px;
+  padding: 9px 12px; outline: none; transition: border-color 0.15s;
+}
+.field input:focus { border-color: var(--cyan-bdr); }
+.field input::placeholder { color: var(--text3); }
+
+.err { font-size: 12px; color: var(--red); margin-top: 5px; display: none; }
+
+.modal-row { display: flex; gap: 8px; margin-top: 6px; }
+.modal-row .btn { flex: 1; padding: 9px; font-size: 13px; }
+
+.privacy-note {
+  font-size: 11px; color: var(--text3);
+  text-align: center; margin-top: 14px; line-height: 1.6;
+}
+
+/* ── PROFILE SIDEBAR ── */
+.sidebar-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 200;
+}
+.sidebar-bg.show { display: block; }
+
+.sidebar {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 320px; background: var(--bg1);
+  border-left: 1px solid var(--bdr2); z-index: 201;
+  overflow-y: auto; padding: 24px 20px;
+  transform: translateX(100%); transition: transform 0.25s ease;
+}
+.sidebar.show { transform: translateX(0); }
+
+.sb-close {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--bg2); border: 1px solid var(--bdr);
+  color: var(--text2); width: 28px; height: 28px;
+  border-radius: var(--r); cursor: pointer;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.sb-close:hover { color: var(--text); background: var(--bg3); }
+
+.sb-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--cyan-bdr);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 12px;
+}
+
+.sb-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.sb-email { font-size: 12px; color: var(--text2); margin-bottom: 20px; word-break: break-all; }
+
+.sb-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 20px;
+}
+
+.sb-stat {
+  background: var(--bg2); border: 1px solid var(--bdr);
+  border-radius: var(--r); padding: 12px; text-align: center;
+}
+.sb-stat .n { font-size: 22px; font-weight: 600; color: var(--cyan); }
+.sb-stat .l { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.sb-section-title {
+  font-size: 11px; font-weight: 500; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+}
+
+.sb-thought {
+  background: var(--bg2); border: 1px solid var(--bdr);
+  border-radius: var(--r); padding: 10px 12px; margin-bottom: 8px;
+}
+
+.sb-thought-text {
+  font-size: 13px; color: var(--text); line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.sb-thought-reacts {
+  display: flex; gap: 10px; font-size: 11px; color: var(--text3);
+}
+
+/* ── DONATE MODAL ── */
+.amt-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 6px; margin-bottom: 14px;
+}
+.amt {
+  background: var(--bg2); border: 1px solid var(--bdr);
+  border-radius: var(--r); padding: 9px;
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  cursor: pointer; text-align: center; transition: all 0.15s;
+  font-family: inherit;
+}
+.amt:hover  { border-color: var(--bdr2); color: var(--text); }
+.amt.picked { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--bg2); border: 1px solid var(--bdr2);
+  border-radius: 20px; padding: 8px 20px;
+  font-size: 13px; color: var(--text);
+  z-index: 999; white-space: nowrap;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  opacity: 0; pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.ok  { border-color: rgba(78,201,78,0.35); color: var(--green); }
+.toast.err { border-color: rgba(244,71,71,0.35); color: var(--red); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+@media(max-width:480px) {
+  .sidebar { width: 100%; }
+  .page { padding: 16px 12px 80px; }
+}
 </style>
 </head>
 <body>
 
-<!-- Hamburger menu: quick access to past semester resources -->
-<div class="menu-container">
-  <button class="menu-btn" id="menuBtn" aria-label="Open academic resources menu">☰</button>
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">
+    <span class="logo-dot"></span>
+    ThoughtFlow
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-outline" id="btnSignIn">Sign in</button>
+    <button class="btn btn-cyan"    id="btnJoin">Join free</button>
+  </div>
+</nav>
 
-  <div class="menu-content" id="menuContent">
-    <div class="submenu" id="academicSubmenu">
-      <a href="#" id="submenuToggle">Academic Resources ▸</a>
+<!-- PAGE -->
+<div class="page">
 
-      <div class="submenu-content" id="submenuContent">
-        <a href="semester1.html">Semester 1</a>
-        <a href="semester2.html">Semester 2</a>
-        <a href="semester3.html">Semester 3</a>
-        <a href="semester4.html">Semester 4</a>
-        <a href="semester5.html">Semester 5</a>
-        <a href="semester6.html">Semester 6</a>
-      </div>
+  <!-- COMPOSE BOX -->
+  <div class="compose-wrap">
+    <div class="compose-top">
+      <span class="anon-pill">Anonymous</span>
+      <span class="compose-hint">No name. No trace.</span>
+    </div>
+    <textarea id="ta" placeholder="What's on your mind? Share freely — nobody knows it's you." maxlength="500"></textarea>
+    <div class="compose-bar">
+      <span class="char" id="cc">0 / 500</span>
+      <button class="btn btn-cyan" id="btnPost">Post thought</button>
+    </div>
+  </div>
+
+  <!-- FEED -->
+  <div class="section-label">
+    <span>Recent thoughts</span>
+    <span class="live-badge">Live feed</span>
+  </div>
+  <div id="feed"></div>
+
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authBg">
+  <div class="modal">
+    <h2 id="authH">Sign in</h2>
+    <p class="sub" id="authSub">Post thoughts anonymously. No phone number needed.</p>
+    <div class="tabs">
+      <button class="tab on" id="tabA" onclick="setTab('in')">Sign in</button>
+      <button class="tab"    id="tabB" onclick="setTab('up')">Create account</button>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="fEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="fPass" placeholder="••••••••">
+      <div class="err" id="fErr"></div>
+    </div>
+    <div class="modal-row">
+      <button class="btn btn-outline" onclick="closeAuth()">Cancel</button>
+      <button class="btn btn-cyan"    id="authGo" onclick="doAuth()">Sign in</button>
+    </div>
+    <p class="privacy-note">Your identity is never attached to your posts. Ever.</p>
+  </div>
+</div>
+
+<!-- DONATE MODAL -->
+<div class="modal-bg" id="donateBg">
+  <div class="modal">
+    <h2>Support this thought</h2>
+    <p class="sub">The author stays anonymous — they only see the amount.</p>
+    <div class="amt-grid">
+      <button class="amt" onclick="pickAmt(this,'1')">$1</button>
+      <button class="amt" onclick="pickAmt(this,'2')">$2</button>
+      <button class="amt" onclick="pickAmt(this,'5')">$5</button>
+      <button class="amt" onclick="pickAmt(this,'10')">$10</button>
+      <button class="amt" onclick="pickAmt(this,'20')">$20</button>
+      <button class="amt" onclick="pickAmt(this,'50')">$50</button>
+    </div>
+    <div class="field">
+      <label>Custom amount ($)</label>
+      <input type="number" id="customAmt" placeholder="0.00" min="0.5" step="0.5">
+    </div>
+    <div class="modal-row">
+      <button class="btn btn-outline" onclick="closeDonate()">Cancel</button>
+      <button class="btn btn-cyan"    onclick="sendDonate()">Send</button>
     </div>
   </div>
 </div>
 
-<nav>
-  <a href="index.html" class="logo">ABDULLAH</a>
+<!-- PROFILE SIDEBAR -->
+<div class="sidebar-bg" id="sbBg" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <button class="sb-close" onclick="closeSidebar()">✕</button>
+  <div class="sb-avatar">🌀</div>
+  <div class="sb-name">Anonymous Member</div>
+  <div class="sb-email" id="sbEmail"></div>
 
-  <ul>
-    <li><a href="#about">About</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#education">Education</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-
-<section class="hero">
-  <div class="hero-text">
-    <h1>ABDULLAH AL NOMAN</h1>
-    <h3 id="typing-text"></h3>
-
-    <p>
-      Passionate about structural engineering, infrastructure
-      development and modern construction technologies.
-    </p>
-
-    <a class="btn" href="#contact">Contact Me</a>
-    <a class="btn" href="Abdullah_Al_Noman_CV.pdf" download>Download CV</a>
-    <a class="btn" href="https://www.linkedin.com/in/abdullah-noman78/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-  </div>
-
-  <div>
-    <img src="profile.jpg" alt="Abdullah Al Noman">
-  </div>
-</section>
-
-<section id="about" class="hidden">
-  <h2 class="section-title">About Me</h2>
-
-  <div class="about">
-    <p>
-      I am Abdullah Al Noman, a Civil Engineering student at
-      Southwest Petroleum University. I am expected to graduate
-      in July 2027.
-    </p>
-
-    <br>
-
-    <p>
-      I am interested in structural design, engineering software,
-      infrastructure projects, and sustainable construction solutions.
-    </p>
-  </div>
-</section>
-
-<section id="skills" class="skills-section hidden">
-  <h2 class="section-title">Technical Skills</h2>
-
-  <div class="skills-grid">
-    <div class="skill">AutoCAD</div>
-    <div class="skill">Revit</div>
-    <div class="skill">SAP2000</div>
-    <div class="skill">ETABS</div>
-    <div class="skill">Adobe Photoshop</div>
-    <div class="skill">Microsoft Office</div>
-  </div>
-</section>
-
-<section id="education" class="hidden">
-  <h2 class="section-title">Education</h2>
-
-  <div class="card">
-    <h3>Southwest Petroleum University</h3>
-    <p>Bachelor of Civil Engineering</p>
-    <p>Expected Graduation: July 2027</p>
-  </div>
-</section>
-
-<section id="experience" class="hidden">
-  <h2 class="section-title">Professional Experience</h2>
-
-  <div class="card">
-    <h3>TikTok Agency Manager / Agent</h3>
-    <p>
-      Managing creators, coordinating operations, handling
-      communication, and supporting creator growth and performance.
-    </p>
-  </div>
-</section>
-
-<section id="projects">
-  <h2 class="section-title">Academic Projects</h2>
-
-  <div class="card">
-    <h3>Engineering Class Projects</h3>
-    <p>
-      Completed coursework involving engineering drawings,
-      structural calculations, AutoCAD exercises and academic
-      design assignments.
-    </p>
-  </div>
-</section>
-
-<section id="contact" class="hidden">
-  <h2 class="section-title">Contact</h2>
-
-  <div class="contact">
-    <p><strong>ABDULLAH AL NOMAN</strong></p>
-
-    <div class="social-icons">
-      <a href="mailto:alabdullahnoman1@gmail.com" class="email" aria-label="Email">
-        <i class="fas fa-envelope"></i>
-      </a>
-      <a href="https://linkedin.com/in/abdullah-noman78" target="_blank" class="linkedin" aria-label="LinkedIn">
-        <i class="fab fa-linkedin"></i>
-      </a>
-      <a href="https://github.com/abdullahaln412-creator" target="_blank" class="github" aria-label="GitHub">
-        <i class="fab fa-github"></i>
-      </a>
-      <a href="https://www.instagram.com/iamrumance/" target="_blank" class="instagram" aria-label="Instagram">
-        <i class="fab fa-instagram"></i>
-      </a>
-      <a href="https://www.facebook.com/ruman.sheikh78626" target="_blank" class="facebook" aria-label="Facebook">
-        <i class="fab fa-facebook"></i>
-      </a>
+  <div class="sb-stats">
+    <div class="sb-stat">
+      <div class="n" id="sbCount">0</div>
+      <div class="l">Thoughts</div>
+    </div>
+    <div class="sb-stat">
+      <div class="n" id="sbReacts">0</div>
+      <div class="l">Reactions</div>
     </div>
   </div>
-</section>
 
-<footer>
-  <p>&copy; 2026 Abdullah Al Noman | Civil Engineering Portfolio</p>
-</footer>
+  <div class="sb-section-title">Your thoughts</div>
+  <div id="sbList"></div>
 
-<a href="https://wa.me/8801780180088" class="whatsapp-btn" target="_blank" aria-label="Chat on WhatsApp">
-  <i class="fab fa-whatsapp"></i>
-</a>
+  <div style="margin-top:20px;">
+    <button class="btn btn-danger" style="width:100%;padding:9px;" onclick="doLogout()">Sign out</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-/* ============================
-   SCROLL REVEAL
-   ============================ */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('show');
-    } else {
-      entry.target.classList.remove('show');
-    }
-  });
-}, { threshold: 0.2 });
+/* ── STATE ── */
+let user     = null;
+let authMode = 'in';
+let donateId = null;
+let pickedAmt= null;
 
-document.querySelectorAll('.hidden').forEach((el) => observer.observe(el));
+const users    = JSON.parse(localStorage.getItem('tf_u') || '{}');
+const thoughts = JSON.parse(localStorage.getItem('tf_t') || '[]');
 
-/* ============================
-   TYPING ANIMATION
-   ============================ */
-const texts = [
-  "Civil Engineering Student",
-  "Structural Engineering Enthusiast",
-  "AutoCAD • Revit • ETABS",
-  "Future Master's Researcher"
-];
+const save = () => {
+  localStorage.setItem('tf_u', JSON.stringify(users));
+  localStorage.setItem('tf_t', JSON.stringify(thoughts));
+};
 
-const typingText = document.getElementById("typing-text");
-let textIndex = 0;
-
-function changeText() {
-  typingText.style.opacity = "0";
-
-  setTimeout(() => {
-    typingText.textContent = texts[textIndex];
-    typingText.style.opacity = "1";
-    textIndex = (textIndex + 1) % texts.length;
-  }, 500);
+/* ── SEED DEMO DATA ── */
+if (!thoughts.length) {
+  [
+    { t: "Sometimes I wonder if the version of me in other people's memories is a completely different person than who I actually am.", li:12, lo:7, di:1 },
+    { t: "The scariest part of growing up is realizing adults don't actually have it figured out either. They're all just winging it.", li:28, lo:15, di:2 },
+    { t: "I think we overthink because we care. People who don't care never lose sleep over anything.", li:19, lo:9, di:0 },
+    { t: "Every language has a word for a feeling your own language doesn't have. That means feelings exist before words do.", li:14, lo:22, di:1 },
+    { t: "Silence between two people is either the most comfortable or the most unbearable thing in the world. Never in between.", li:8, lo:11, di:3 },
+  ].forEach((d, i) => thoughts.push({
+    id: 'demo' + i, text: d.t, ts: Date.now() - i * 7200000,
+    li: d.li, lo: d.lo, di: d.di, rx: null, owner: null
+  }));
+  save();
 }
 
-typingText.textContent = texts[0];
-setInterval(changeText, 3000);
-
-/* ============================
-   HAMBURGER MENU + SUBMENU
-   ============================ */
-const menuBtn = document.getElementById("menuBtn");
-const menuContent = document.getElementById("menuContent");
-const submenuToggle = document.getElementById("submenuToggle");
-const submenuContent = document.getElementById("submenuContent");
-
-menuBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  menuContent.classList.toggle("active");
-  // Close submenu whenever the main menu is toggled shut/open fresh
-  submenuContent.classList.remove("active");
-});
-
-submenuToggle.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  submenuContent.classList.toggle("active");
-});
-
-document.addEventListener("click", (e) => {
-  const clickedInsideMenu = menuContent.contains(e.target) || e.target === menuBtn;
-  if (!clickedInsideMenu) {
-    menuContent.classList.remove("active");
-    submenuContent.classList.remove("active");
+/* ── RENDER FEED ── */
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  if (!thoughts.length) {
+    feed.innerHTML = `<div class="empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <p>No thoughts yet.<br>Be the first to share something.</p>
+    </div>`;
+    return;
   }
-});
-</script>
+  feed.innerHTML = '';
+  thoughts.slice().reverse().forEach(t => feed.appendChild(makeCard(t)));
+}
 
+function makeCard(t) {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.id = 'c_' + t.id;
+
+  const mine = user && t.owner === user;
+  const ago  = timeAgo(t.ts);
+
+  div.innerHTML = `
+    <div class="card-head">
+      <span class="card-tag">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+          <line x1="16" y1="3" x2="20" y2="7"/><line x1="20" y1="3" x2="16" y2="7"/>
+        </svg>
+        anonymous
+      </span>
+      <span class="card-time">${ago}</span>
+    </div>
+    <div class="card-body">${esc(t.text)}</div>
+    <div class="card-footer">
+      <button class="rbtn ${t.rx==='li'?'on-like':''}"    onclick="react('${t.id}','li')">👍 <span class="n">${t.li}</span></button>
+      <button class="rbtn ${t.rx==='lo'?'on-love':''}"    onclick="react('${t.id}','lo')">❤️ <span class="n">${t.lo}</span></button>
+      <button class="rbtn ${t.rx==='di'?'on-dislike':''}" onclick="react('${t.id}','di')">👎 <span class="n">${t.di}</span></button>
+      <button class="donate-btn" onclick="openDonate('${t.id}')">💙 Donate</button>
+    </div>
+    ${mine ? '<div class="owner-mark">◆ your thought</div>' : ''}
+  `;
+  return div;
+}
+
+/* ── COMPOSE ── */
+const ta = document.getElementById('ta');
+const cc = document.getElementById('cc');
+
+ta.addEventListener('input', () => {
+  const n = ta.value.length;
+  cc.textContent = n + ' / 500';
+  cc.className   = n > 480 ? 'char over' : n > 420 ? 'char warn' : 'char';
+});
+
+document.getElementById('btnPost').onclick = () => {
+  if (!user) { openAuth('in'); return; }
+  const txt = ta.value.trim();
+  if (!txt)        { toast('Write something first.', 'err'); return; }
+  if (txt.length > 500) { toast('Max 500 characters.', 'err'); return; }
+
+  thoughts.push({ id: 'th' + Date.now(), text: txt, ts: Date.now(), li:0, lo:0, di:0, rx:null, owner: user });
+  save();
+  ta.value = ''; cc.textContent = '0 / 500'; cc.className = 'char';
+  renderFeed();
+  toast('Your thought is out there — anonymously ✦', 'ok');
+};
+
+/* ── REACTIONS ── */
+function react(id, type) {
+  if (!user) { openAuth('in'); return; }
+  const t = thoughts.find(x => x.id === id);
+  if (!t) return;
+  if (t.rx) t[t.rx]--;
+  t.rx = t.rx === type ? null : type;
+  if (t.rx) t[t.rx]++;
+  save();
+  const old = document.getElementById('c_' + id);
+  if (old) old.replaceWith(makeCard(t));
+}
+
+/* ── AUTH ── */
+document.getElementById('btnSignIn').onclick = () => openAuth('in');
+document.getElementById('btnJoin').onclick   = () => openAuth('up');
+
+function openAuth(mode) {
+  authMode = mode;
+  setTab(mode);
+  document.getElementById('authBg').classList.add('show');
+  setTimeout(() => document.getElementById('fEmail').focus(), 80);
+}
+
+function closeAuth() {
+  document.getElementById('authBg').classList.remove('show');
+  document.getElementById('fErr').style.display = 'none';
+  document.getElementById('fEmail').value = '';
+  document.getElementById('fPass').value  = '';
+}
+
+function setTab(m) {
+  authMode = m;
+  document.getElementById('tabA').className = 'tab' + (m==='in'?' on':'');
+  document.getElementById('tabB').className = 'tab' + (m==='up'?' on':'');
+  document.getElementById('authH').textContent    = m==='in' ? 'Sign in'        : 'Create account';
+  document.getElementById('authSub').textContent  = m==='in' ? 'Post thoughts anonymously. No phone number needed.' : 'Just your email. No phone. No real name.';
+  document.getElementById('authGo').textContent   = m==='in' ? 'Sign in'        : 'Create account';
+  document.getElementById('fErr').style.display   = 'none';
+}
+
+function doAuth() {
+  const email = document.getElementById('fEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('fPass').value;
+  const err   = document.getElementById('fErr');
+
+  if (!email || !pass)       { showErr('Fill in all fields.'); return; }
+  if (!email.includes('@'))  { showErr('Enter a valid email.'); return; }
+  if (pass.length < 6)       { showErr('Password needs 6+ characters.'); return; }
+
+  if (authMode === 'up') {
+    if (users[email]) { showErr('Account already exists. Sign in instead.'); return; }
+    users[email] = { pass };
+    save();
+    setLoggedIn(email);
+    closeAuth();
+    toast('Account created — welcome!', 'ok');
+  } else {
+    if (!users[email] || users[email].pass !== pass) { showErr('Wrong email or password.'); return; }
+    setLoggedIn(email);
+    closeAuth();
+    toast('Welcome back.', 'ok');
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('fErr');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+document.getElementById('fPass').addEventListener('keydown', e => { if (e.key==='Enter') doAuth(); });
+
+function setLoggedIn(email) {
+  user = email;
+  document.getElementById('btnSignIn').style.display = 'none';
+  document.getElementById('btnJoin').textContent  = 'My profile';
+  document.getElementById('btnJoin').className    = 'btn btn-outline';
+  document.getElementById('btnJoin').onclick      = openSidebar;
+  renderFeed();
+}
+
+function doLogout() {
+  user = null;
+  document.getElementById('btnSignIn').style.display = '';
+  document.getElementById('btnJoin').textContent  = 'Join free';
+  document.getElementById('btnJoin').className    = 'btn btn-cyan';
+  document.getElementById('btnJoin').onclick      = () => openAuth('up');
+  closeSidebar();
+  renderFeed();
+  toast('Signed out.', '');
+}
+
+/* ── PROFILE SIDEBAR ── */
+function openSidebar() {
+  if (!user) { openAuth('in'); return; }
+
+  document.getElementById('sbEmail').textContent = user;
+
+  const mine  = thoughts.filter(t => t.owner === user);
+  const reacts= mine.reduce((s,t) => s + t.li + t.lo + t.di, 0);
+  document.getElementById('sbCount').textContent  = mine.length;
+  document.getElementById('sbReacts').textContent = reacts;
+
+  const list = document.getElementById('sbList');
+  list.innerHTML = '';
+
+  if (!mine.length) {
+    list.innerHTML = `<p style="font-size:12px;color:var(--text3);text-align:center;padding:20px 0;">No thoughts yet.</p>`;
+  } else {
+    mine.slice().reverse().forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'sb-thought';
+      el.innerHTML = `
+        <div class="sb-thought-text">${esc(t.text.length>100 ? t.text.slice(0,100)+'…' : t.text)}</div>
+        <div class="sb-thought-reacts">
+          <span>👍 ${t.li}</span>
+          <span>❤️ ${t.lo}</span>
+          <span>👎 ${t.di}</span>
+          <span style="margin-left:auto;">${timeAgo(t.ts)}</span>
+        </div>
+      `;
+      list.appendChild(el);
+    });
+  }
+
+  document.getElementById('sbBg').classList.add('show');
+  document.getElementById('sidebar').classList.add('show');
+}
+
+function closeSidebar() {
+  document.getElementById('sbBg').classList.remove('show');
+  document.getElementById('sidebar').classList.remove('show');
+}
+
+/* ── DONATE ── */
+function openDonate(id) {
+  donateId = id; pickedAmt = null;
+  document.querySelectorAll('.amt').forEach(b => b.classList.remove('picked'));
+  document.getElementById('customAmt').value = '';
+  document.getElementById('donateBg').classList.add('show');
+}
+
+function closeDonate() {
+  document.getElementById('donateBg').classList.remove('show');
+  donateId = null;
+}
+
+function pickAmt(el, v) {
+  document.querySelectorAll('.amt').forEach(b => b.classList.remove('picked'));
+  el.classList.add('picked');
+  pickedAmt = v;
+  document.getElementById('customAmt').value = '';
+}
+
+function sendDonate() {
+  const custom = document.getElementById('customAmt').value;
+  const amt = custom || pickedAmt;
+  if (!amt || parseFloat(amt) <= 0) { toast('Pick or enter an amount.', 'err'); return; }
+  closeDonate();
+  toast('$' + parseFloat(amt).toFixed(2) + ' sent anonymously 💙', 'ok');
+}
+
+/* ── UTILS ── */
+function timeAgo(ts) {
+  const d = Date.now() - ts;
+  const m = Math.floor(d/60000);
+  const h = Math.floor(d/3600000);
+  const dy= Math.floor(d/86400000);
+  if (m < 1)  return 'just now';
+  if (m < 60) return m + 'm ago';
+  if (h < 24) return h + 'h ago';
+  return dy + 'd ago';
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+let toastTimer;
+function toast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = 'toast show ' + (type||'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* backdrop close */
+document.getElementById('authBg').addEventListener('click', e => { if (e.target.id==='authBg') closeAuth(); });
+document.getElementById('donateBg').addEventListener('click', e => { if (e.target.id==='donateBg') closeDonate(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeAuth(); closeDonate(); closeSidebar(); }
+});
+
+/* ── INIT ── */
+renderFeed();
+</script>
 </body>
 </html>
