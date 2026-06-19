@@ -17,12 +17,15 @@
   --cyan-dim: rgba(78,201,176,0.1);
   --cyan-bdr: rgba(78,201,176,0.25);
   --blue:     #569cd6;
+  --blue-dim: rgba(86,156,214,0.1);
+  --blue-bdr: rgba(86,156,214,0.25);
   --text:     #d4d4d4;
   --text2:    #858585;
   --text3:    #5a5a5a;
   --red:      #f44747;
   --green:    #4ec94e;
   --amber:    #ce9178;
+  --purple:   #c586c0;
   --bdr:      rgba(255,255,255,0.07);
   --bdr2:     rgba(255,255,255,0.13);
   --r:        6px;
@@ -46,21 +49,38 @@ body {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 24px; height: 48px;
 }
-
 .logo {
   font-size: 15px; font-weight: 600; color: var(--cyan);
   letter-spacing: 0.2px; display: flex; align-items: center; gap: 8px;
 }
-
 .logo-dot {
   width: 7px; height: 7px;
   background: var(--cyan); border-radius: 50%;
   animation: blink 2.5s ease-in-out infinite;
 }
-
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
 .nav-actions { display: flex; align-items: center; gap: 8px; }
+
+/* inbox bell */
+.bell-wrap { position: relative; cursor: pointer; }
+.bell-btn {
+  width: 34px; height: 34px;
+  background: transparent; border: 1px solid var(--bdr);
+  border-radius: var(--r); color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; font-size: 15px;
+}
+.bell-btn:hover { background: var(--bg2); color: var(--text); }
+.bell-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--red); color: #fff;
+  font-size: 10px; font-weight: 600;
+  min-width: 16px; height: 16px;
+  border-radius: 8px; display: none;
+  align-items: center; justify-content: center;
+  padding: 0 4px;
+}
+.bell-badge.show { display: flex; }
 
 /* ── BUTTONS ── */
 .btn {
@@ -70,71 +90,52 @@ body {
   transition: background 0.15s, color 0.15s, opacity 0.15s;
   line-height: 1;
 }
-
-.btn-outline {
-  background: transparent; color: var(--text2);
-  border: 1px solid var(--bdr2);
-}
+.btn-outline { background: transparent; color: var(--text2); border: 1px solid var(--bdr2); }
 .btn-outline:hover { background: var(--bg2); color: var(--text); }
-
-.btn-cyan {
-  background: var(--cyan); color: #0d1a17; font-weight: 600;
-}
+.btn-cyan { background: var(--cyan); color: #0d1a17; font-weight: 600; }
 .btn-cyan:hover { opacity: 0.88; }
-
-.btn-danger {
-  background: transparent; color: var(--red);
-  border: 1px solid rgba(244,71,71,0.3);
-}
+.btn-blue { background: var(--blue); color: #0a1520; font-weight: 600; }
+.btn-blue:hover { opacity: 0.88; }
+.btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(244,71,71,0.3); }
 .btn-danger:hover { background: rgba(244,71,71,0.08); }
+.btn-ghost { background: var(--bg2); color: var(--text2); border: 1px solid var(--bdr); }
+.btn-ghost:hover { color: var(--text); }
 
 /* ── PAGE ── */
 .page { max-width: 620px; margin: 0 auto; padding: 24px 16px 80px; }
 
 /* ── COMPOSE ── */
 .compose-wrap {
-  background: var(--bg1);
-  border: 1px solid var(--bdr);
-  border-radius: var(--r2);
-  padding: 16px;
-  margin-bottom: 24px;
+  background: var(--bg1); border: 1px solid var(--bdr);
+  border-radius: var(--r2); padding: 16px; margin-bottom: 24px;
 }
-
 .compose-top {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
 }
-
 .anon-pill {
   font-size: 11px; color: var(--cyan);
   background: var(--cyan-dim); border: 1px solid var(--cyan-bdr);
   border-radius: 20px; padding: 2px 10px;
   display: flex; align-items: center; gap: 5px;
 }
-
 .anon-pill::before {
   content: ''; width: 5px; height: 5px;
   background: var(--cyan); border-radius: 50%;
 }
-
 .compose-hint { font-size: 11px; color: var(--text3); margin-left: auto; }
-
 textarea {
   width: 100%; background: var(--bg2);
   border: 1px solid var(--bdr); border-radius: var(--r);
   color: var(--text); font-family: inherit; font-size: 14px;
   line-height: 1.65; padding: 12px 14px; resize: none;
-  outline: none; min-height: 90px;
-  transition: border-color 0.15s;
+  outline: none; min-height: 90px; transition: border-color 0.15s;
 }
 textarea:focus { border-color: var(--cyan-bdr); }
 textarea::placeholder { color: var(--text3); }
-
 .compose-bar {
   display: flex; align-items: center;
   justify-content: space-between; margin-top: 10px;
 }
-
 .char { font-size: 11px; color: var(--text3); }
 .char.warn { color: var(--amber); }
 .char.over { color: var(--red); }
@@ -146,12 +147,10 @@ textarea::placeholder { color: var(--text3); }
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 12px;
 }
-
 .live-badge {
   display: flex; align-items: center; gap: 5px;
   font-size: 11px; color: var(--green);
 }
-
 .live-badge::before {
   content: ''; width: 5px; height: 5px;
   background: var(--green); border-radius: 50%;
@@ -160,44 +159,51 @@ textarea::placeholder { color: var(--text3); }
 
 /* ── THOUGHT CARD ── */
 .card {
-  background: var(--bg1);
-  border: 1px solid var(--bdr);
-  border-radius: var(--r2);
-  padding: 16px; margin-bottom: 10px;
-  transition: border-color 0.15s;
-  animation: rise 0.3s ease;
+  background: var(--bg1); border: 1px solid var(--bdr);
+  border-radius: var(--r2); padding: 16px; margin-bottom: 10px;
+  transition: border-color 0.15s; animation: rise 0.3s ease;
 }
 .card:hover { border-color: var(--bdr2); }
-
 @keyframes rise {
   from { opacity:0; transform: translateY(-6px); }
   to   { opacity:1; transform: translateY(0); }
 }
-
 .card-head {
   display: flex; align-items: center;
   justify-content: space-between; margin-bottom: 10px;
 }
-
 .card-tag {
   font-size: 11px; color: var(--text3);
   display: flex; align-items: center; gap: 5px;
 }
-
 .card-tag svg { opacity: 0.4; }
-
 .card-time { font-size: 11px; color: var(--text3); }
-
 .card-body {
   font-size: 14px; color: var(--text);
-  line-height: 1.75; margin-bottom: 14px;
-  word-break: break-word;
+  line-height: 1.75; margin-bottom: 14px; word-break: break-word;
 }
-
 .card-footer {
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   padding-top: 12px; border-top: 1px solid var(--bdr);
 }
+
+/* views chip — only shown to owner */
+.views-chip {
+  font-size: 11px; color: var(--text3);
+  display: flex; align-items: center; gap: 4px;
+  margin-left: auto;
+}
+.views-chip svg { opacity: 0.4; }
+
+/* owner stats bar */
+.owner-bar {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 10px; padding-top: 8px;
+  border-top: 1px dashed var(--bdr);
+  font-size: 11px; color: var(--text3);
+}
+.owner-bar span { display: flex; align-items: center; gap: 4px; }
+.owner-bar .label { color: var(--blue); font-weight: 500; }
 
 /* ── REACT BUTTONS ── */
 .rbtn {
@@ -205,45 +211,43 @@ textarea::placeholder { color: var(--text3); }
   background: var(--bg2); border: 1px solid var(--bdr);
   border-radius: 20px; padding: 4px 11px;
   font-size: 13px; color: var(--text2);
-  cursor: pointer; transition: all 0.15s;
-  font-family: inherit;
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
 }
 .rbtn:hover { border-color: var(--bdr2); color: var(--text); background: var(--bg3); }
 .rbtn .n { font-size: 12px; font-weight: 500; min-width: 10px; }
-
 .rbtn.on-like    { border-color: rgba(78,201,78,0.4);   background: rgba(78,201,78,0.08);   color: var(--green); }
 .rbtn.on-love    { border-color: rgba(244,71,71,0.4);   background: rgba(244,71,71,0.08);   color: var(--red); }
 .rbtn.on-dislike { border-color: rgba(206,145,120,0.4); background: rgba(206,145,120,0.08); color: var(--amber); }
 
 .donate-btn {
-  margin-left: auto;
   display: flex; align-items: center; gap: 5px;
   background: transparent; border: 1px solid var(--cyan-bdr);
   border-radius: 20px; padding: 4px 12px;
   font-size: 12px; color: var(--cyan);
-  cursor: pointer; transition: all 0.15s;
-  font-family: inherit;
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
 }
 .donate-btn:hover { background: var(--cyan-dim); }
 
-.owner-mark {
-  font-size: 11px; color: var(--blue);
-  text-align: right; margin-top: 8px; opacity: 0.7;
+.msg-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: transparent; border: 1px solid var(--blue-bdr);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 12px; color: var(--blue);
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
 }
+.msg-btn:hover { background: var(--blue-dim); }
+.msg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── EMPTY ── */
-.empty {
-  text-align: center; padding: 60px 20px; color: var(--text3);
-}
+.empty { text-align: center; padding: 60px 20px; color: var(--text3); }
 .empty svg { display: block; margin: 0 auto 14px; opacity: 0.2; }
 .empty p { font-size: 13px; line-height: 1.7; }
 
 /* ── MODAL BACKDROP ── */
 .modal-bg {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6); z-index: 200;
-  align-items: center; justify-content: center;
-  padding: 20px;
+  background: rgba(0,0,0,0.65); z-index: 200;
+  align-items: center; justify-content: center; padding: 20px;
 }
 .modal-bg.show { display: flex; }
 
@@ -251,10 +255,8 @@ textarea::placeholder { color: var(--text3); }
 .modal {
   background: var(--bg1); border: 1px solid var(--bdr2);
   border-radius: var(--r2); padding: 28px;
-  width: 100%; max-width: 400px;
-  animation: rise 0.2s ease;
+  width: 100%; max-width: 400px; animation: rise 0.2s ease;
 }
-
 .modal h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
 .modal .sub { font-size: 12px; color: var(--text2); margin-bottom: 20px; }
 
@@ -287,12 +289,12 @@ textarea::placeholder { color: var(--text3); }
 }
 .field input:focus { border-color: var(--cyan-bdr); }
 .field input::placeholder { color: var(--text3); }
-
+.field textarea {
+  min-height: 80px; resize: none;
+}
 .err { font-size: 12px; color: var(--red); margin-top: 5px; display: none; }
-
 .modal-row { display: flex; gap: 8px; margin-top: 6px; }
 .modal-row .btn { flex: 1; padding: 9px; font-size: 13px; }
-
 .privacy-note {
   font-size: 11px; color: var(--text3);
   text-align: center; margin-top: 14px; line-height: 1.6;
@@ -304,7 +306,6 @@ textarea::placeholder { color: var(--text3); }
   background: rgba(0,0,0,0.5); z-index: 200;
 }
 .sidebar-bg.show { display: block; }
-
 .sidebar {
   position: fixed; top: 0; right: 0; bottom: 0;
   width: 320px; background: var(--bg1);
@@ -313,7 +314,6 @@ textarea::placeholder { color: var(--text3); }
   transform: translateX(100%); transition: transform 0.25s ease;
 }
 .sidebar.show { transform: translateX(0); }
-
 .sb-close {
   position: absolute; top: 16px; right: 16px;
   background: var(--bg2); border: 1px solid var(--bdr);
@@ -323,47 +323,123 @@ textarea::placeholder { color: var(--text3); }
   transition: all 0.15s;
 }
 .sb-close:hover { color: var(--text); background: var(--bg3); }
-
 .sb-avatar {
   width: 52px; height: 52px; border-radius: 50%;
   background: var(--bg3); border: 1px solid var(--cyan-bdr);
   display: flex; align-items: center; justify-content: center;
   font-size: 22px; margin-bottom: 12px;
 }
-
 .sb-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
 .sb-email { font-size: 12px; color: var(--text2); margin-bottom: 20px; word-break: break-all; }
-
 .sb-stats {
-  display: grid; grid-template-columns: 1fr 1fr;
+  display: grid; grid-template-columns: repeat(3,1fr);
   gap: 8px; margin-bottom: 20px;
 }
-
 .sb-stat {
   background: var(--bg2); border: 1px solid var(--bdr);
-  border-radius: var(--r); padding: 12px; text-align: center;
+  border-radius: var(--r); padding: 10px; text-align: center;
 }
-.sb-stat .n { font-size: 22px; font-weight: 600; color: var(--cyan); }
-.sb-stat .l { font-size: 11px; color: var(--text3); margin-top: 2px; }
-
+.sb-stat .n { font-size: 20px; font-weight: 600; color: var(--cyan); }
+.sb-stat .l { font-size: 10px; color: var(--text3); margin-top: 2px; }
 .sb-section-title {
   font-size: 11px; font-weight: 500; color: var(--text3);
   text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
 }
-
 .sb-thought {
   background: var(--bg2); border: 1px solid var(--bdr);
   border-radius: var(--r); padding: 10px 12px; margin-bottom: 8px;
 }
-
-.sb-thought-text {
-  font-size: 13px; color: var(--text); line-height: 1.55;
-  margin-bottom: 8px;
-}
-
-.sb-thought-reacts {
+.sb-thought-text { font-size: 13px; color: var(--text); line-height: 1.55; margin-bottom: 8px; }
+.sb-thought-meta {
   display: flex; gap: 10px; font-size: 11px; color: var(--text3);
+  flex-wrap: wrap;
 }
+.sb-thought-meta .views-tag { color: var(--blue); margin-left: auto; }
+
+/* ── INBOX SIDEBAR ── */
+.inbox-sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: 340px; background: var(--bg1);
+  border-right: 1px solid var(--bdr2); z-index: 201;
+  overflow-y: auto; padding: 24px 20px;
+  transform: translateX(-100%); transition: transform 0.25s ease;
+}
+.inbox-sidebar.show { transform: translateX(0); }
+
+.inbox-tabs {
+  display: flex; background: var(--bg2);
+  border-radius: var(--r); padding: 3px; margin-bottom: 16px;
+}
+.inbox-tab {
+  flex: 1; text-align: center; padding: 6px;
+  border-radius: 4px; font-size: 12px;
+  cursor: pointer; color: var(--text2);
+  border: none; background: transparent;
+  font-family: inherit; transition: all 0.15s;
+  position: relative;
+}
+.inbox-tab.on { background: var(--bg3); color: var(--cyan); font-weight: 500; }
+.inbox-tab .dot {
+  position: absolute; top: 4px; right: 8px;
+  width: 6px; height: 6px; background: var(--red);
+  border-radius: 50%; display: none;
+}
+.inbox-tab .dot.show { display: block; }
+
+/* message request card */
+.req-card {
+  background: var(--bg2); border: 1px solid var(--bdr);
+  border-radius: var(--r); padding: 12px 14px; margin-bottom: 8px;
+  transition: border-color 0.15s;
+}
+.req-card.unread { border-color: var(--blue-bdr); }
+.req-card-head {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 6px;
+}
+.req-from { font-size: 12px; color: var(--text2); font-style: italic; }
+.req-time { font-size: 11px; color: var(--text3); }
+.req-msg { font-size: 13px; color: var(--text); line-height: 1.55; margin-bottom: 10px; }
+.req-about {
+  font-size: 11px; color: var(--text3); margin-bottom: 10px;
+  border-left: 2px solid var(--bdr2); padding-left: 8px;
+  font-style: italic;
+}
+.req-actions { display: flex; gap: 6px; }
+.req-actions .btn { padding: 5px 12px; font-size: 12px; }
+
+/* chat thread */
+.chat-thread {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.chat-msg {
+  max-width: 85%; padding: 8px 12px;
+  border-radius: var(--r); font-size: 13px; line-height: 1.55;
+}
+.chat-msg.mine {
+  background: var(--cyan-dim); border: 1px solid var(--cyan-bdr);
+  color: var(--text); align-self: flex-end;
+}
+.chat-msg.theirs {
+  background: var(--bg2); border: 1px solid var(--bdr);
+  color: var(--text); align-self: flex-start;
+}
+.chat-meta {
+  font-size: 10px; color: var(--text3); margin-top: 3px; text-align: right;
+}
+.chat-meta.theirs { text-align: left; }
+.chat-input-row {
+  display: flex; gap: 8px; margin-top: 12px;
+  padding-top: 12px; border-top: 1px solid var(--bdr);
+}
+.chat-input-row input {
+  flex: 1; background: var(--bg2); border: 1px solid var(--bdr);
+  border-radius: var(--r); color: var(--text); font-family: inherit;
+  font-size: 13px; padding: 8px 12px; outline: none;
+  transition: border-color 0.15s;
+}
+.chat-input-row input:focus { border-color: var(--cyan-bdr); }
+.chat-input-row input::placeholder { color: var(--text3); }
 
 /* ── DONATE MODAL ── */
 .amt-grid {
@@ -374,10 +450,9 @@ textarea::placeholder { color: var(--text3); }
   background: var(--bg2); border: 1px solid var(--bdr);
   border-radius: var(--r); padding: 9px;
   font-size: 13px; font-weight: 500; color: var(--text2);
-  cursor: pointer; text-align: center; transition: all 0.15s;
-  font-family: inherit;
+  cursor: pointer; text-align: center; transition: all 0.15s; font-family: inherit;
 }
-.amt:hover  { border-color: var(--bdr2); color: var(--text); }
+.amt:hover { border-color: var(--bdr2); color: var(--text); }
 .amt.picked { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
 
 /* ── TOAST ── */
@@ -401,7 +476,7 @@ textarea::placeholder { color: var(--text3); }
 ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
 
 @media(max-width:480px) {
-  .sidebar { width: 100%; }
+  .sidebar, .inbox-sidebar { width: 100%; }
   .page { padding: 16px 12px 80px; }
 }
 </style>
@@ -415,6 +490,11 @@ textarea::placeholder { color: var(--text3); }
     ThoughtFlow
   </div>
   <div class="nav-actions">
+    <!-- inbox bell (shown when logged in) -->
+    <div class="bell-wrap" id="bellWrap" style="display:none;">
+      <button class="bell-btn" onclick="openInbox()" title="Messages">✉</button>
+      <span class="bell-badge" id="bellBadge"></span>
+    </div>
     <button class="btn btn-outline" id="btnSignIn">Sign in</button>
     <button class="btn btn-cyan"    id="btnJoin">Join free</button>
   </div>
@@ -422,8 +502,6 @@ textarea::placeholder { color: var(--text3); }
 
 <!-- PAGE -->
 <div class="page">
-
-  <!-- COMPOSE BOX -->
   <div class="compose-wrap">
     <div class="compose-top">
       <span class="anon-pill">Anonymous</span>
@@ -436,13 +514,11 @@ textarea::placeholder { color: var(--text3); }
     </div>
   </div>
 
-  <!-- FEED -->
   <div class="section-label">
     <span>Recent thoughts</span>
     <span class="live-badge">Live feed</span>
   </div>
   <div id="feed"></div>
-
 </div>
 
 <!-- AUTH MODAL -->
@@ -465,9 +541,27 @@ textarea::placeholder { color: var(--text3); }
     </div>
     <div class="modal-row">
       <button class="btn btn-outline" onclick="closeAuth()">Cancel</button>
-      <button class="btn btn-cyan"    id="authGo" onclick="doAuth()">Sign in</button>
+      <button class="btn btn-cyan" id="authGo" onclick="doAuth()">Sign in</button>
     </div>
     <p class="privacy-note">Your identity is never attached to your posts. Ever.</p>
+  </div>
+</div>
+
+<!-- MESSAGE REQUEST MODAL -->
+<div class="modal-bg" id="msgBg">
+  <div class="modal">
+    <h2>Send a message request</h2>
+    <p class="sub" id="msgSub">You can only send one request to this person.</p>
+    <div class="field">
+      <label>Your message</label>
+      <textarea id="msgText" placeholder="Write something genuine. This is your only chance to reach out." maxlength="300" style="min-height:100px;"></textarea>
+      <div class="err" id="msgErr"></div>
+    </div>
+    <div class="modal-row">
+      <button class="btn btn-outline" onclick="closeMsgModal()">Cancel</button>
+      <button class="btn btn-blue" onclick="sendMsgRequest()">Send request</button>
+    </div>
+    <p class="privacy-note">They will not know who you are unless you tell them.</p>
   </div>
 </div>
 
@@ -490,35 +584,63 @@ textarea::placeholder { color: var(--text3); }
     </div>
     <div class="modal-row">
       <button class="btn btn-outline" onclick="closeDonate()">Cancel</button>
-      <button class="btn btn-cyan"    onclick="sendDonate()">Send</button>
+      <button class="btn btn-cyan" onclick="sendDonate()">Send</button>
     </div>
   </div>
 </div>
 
-<!-- PROFILE SIDEBAR -->
+<!-- PROFILE SIDEBAR (right) -->
 <div class="sidebar-bg" id="sbBg" onclick="closeSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <button class="sb-close" onclick="closeSidebar()">✕</button>
   <div class="sb-avatar">🌀</div>
   <div class="sb-name">Anonymous Member</div>
   <div class="sb-email" id="sbEmail"></div>
-
   <div class="sb-stats">
-    <div class="sb-stat">
-      <div class="n" id="sbCount">0</div>
-      <div class="l">Thoughts</div>
-    </div>
-    <div class="sb-stat">
-      <div class="n" id="sbReacts">0</div>
-      <div class="l">Reactions</div>
-    </div>
+    <div class="sb-stat"><div class="n" id="sbCount">0</div><div class="l">Thoughts</div></div>
+    <div class="sb-stat"><div class="n" id="sbViews">0</div><div class="l">Total views</div></div>
+    <div class="sb-stat"><div class="n" id="sbReacts">0</div><div class="l">Reactions</div></div>
   </div>
-
   <div class="sb-section-title">Your thoughts</div>
   <div id="sbList"></div>
-
   <div style="margin-top:20px;">
     <button class="btn btn-danger" style="width:100%;padding:9px;" onclick="doLogout()">Sign out</button>
+  </div>
+</div>
+
+<!-- INBOX SIDEBAR (left) -->
+<div class="inbox-sidebar" id="inboxSidebar">
+  <button class="sb-close" style="left:16px;right:auto;" onclick="closeInbox()">✕</button>
+  <div style="font-size:15px;font-weight:600;margin-bottom:16px;margin-top:4px;">Inbox</div>
+
+  <div class="inbox-tabs">
+    <button class="inbox-tab on" id="itabReq"  onclick="switchInboxTab('requests')">
+      Requests <span class="dot" id="reqDot"></span>
+    </button>
+    <button class="inbox-tab"    id="itabChats" onclick="switchInboxTab('chats')">
+      Chats <span class="dot" id="chatDot"></span>
+    </button>
+  </div>
+
+  <div id="inboxRequests"></div>
+  <div id="inboxChats" style="display:none;"></div>
+</div>
+
+<!-- CHAT MODAL -->
+<div class="modal-bg" id="chatBg">
+  <div class="modal" style="max-width:460px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div style="font-size:14px;font-weight:600;">Anonymous chat</div>
+        <div style="font-size:11px;color:var(--text3);" id="chatWith"></div>
+      </div>
+      <button class="btn btn-ghost" style="padding:5px 10px;" onclick="closeChat()">✕</button>
+    </div>
+    <div class="chat-thread" id="chatThread" style="min-height:200px;max-height:320px;overflow-y:auto;"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Type a message…" maxlength="500">
+      <button class="btn btn-cyan" onclick="sendChatMsg()" style="padding:8px 14px;">Send</button>
+    </div>
   </div>
 </div>
 
@@ -526,36 +648,64 @@ textarea::placeholder { color: var(--text3); }
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── STATE ── */
-let user     = null;
-let authMode = 'in';
-let donateId = null;
-let pickedAmt= null;
+/* ═══════════════════════════
+   STATE
+═══════════════════════════ */
+let user      = null;
+let authMode  = 'in';
+let donateId  = null;
+let pickedAmt = null;
+let msgTarget = null;   // thought owner we're messaging
+let activeChatId = null;
 
 const users    = JSON.parse(localStorage.getItem('tf_u') || '{}');
 const thoughts = JSON.parse(localStorage.getItem('tf_t') || '[]');
+// requests: { id, from, to, msg, thoughtId, thoughtSnippet, ts, status: 'pending'|'accepted'|'declined' }
+const requests = JSON.parse(localStorage.getItem('tf_r') || '[]');
+// chats: { id, participants:[a,b], messages:[{from,text,ts}] }
+const chats    = JSON.parse(localStorage.getItem('tf_c') || '[]');
 
 const save = () => {
   localStorage.setItem('tf_u', JSON.stringify(users));
   localStorage.setItem('tf_t', JSON.stringify(thoughts));
+  localStorage.setItem('tf_r', JSON.stringify(requests));
+  localStorage.setItem('tf_c', JSON.stringify(chats));
 };
 
-/* ── SEED DEMO DATA ── */
+/* ─── SEED DEMO THOUGHTS ─── */
 if (!thoughts.length) {
   [
-    { t: "Sometimes I wonder if the version of me in other people's memories is a completely different person than who I actually am.", li:12, lo:7, di:1 },
-    { t: "The scariest part of growing up is realizing adults don't actually have it figured out either. They're all just winging it.", li:28, lo:15, di:2 },
-    { t: "I think we overthink because we care. People who don't care never lose sleep over anything.", li:19, lo:9, di:0 },
-    { t: "Every language has a word for a feeling your own language doesn't have. That means feelings exist before words do.", li:14, lo:22, di:1 },
-    { t: "Silence between two people is either the most comfortable or the most unbearable thing in the world. Never in between.", li:8, lo:11, di:3 },
-  ].forEach((d, i) => thoughts.push({
-    id: 'demo' + i, text: d.t, ts: Date.now() - i * 7200000,
-    li: d.li, lo: d.lo, di: d.di, rx: null, owner: null
+    { t:"Sometimes I wonder if the version of me in other people's memories is a completely different person than who I actually am.", li:12,lo:7,di:1,vi:84 },
+    { t:"The scariest part of growing up is realizing adults don't actually have it figured out either. They're all just winging it.", li:28,lo:15,di:2,vi:201 },
+    { t:"I think we overthink because we care. People who don't care never lose sleep over anything.", li:19,lo:9,di:0,vi:137 },
+    { t:"Every language has a word for a feeling your own language doesn't have. That means feelings exist before words do.", li:14,lo:22,di:1,vi:96 },
+    { t:"Silence between two people is either the most comfortable or the most unbearable thing in the world. Never in between.", li:8,lo:11,di:3,vi:73 },
+  ].forEach((d,i) => thoughts.push({
+    id:'demo'+i, text:d.t, ts:Date.now()-i*7200000,
+    li:d.li, lo:d.lo, di:d.di, rx:null, owner:null, views:d.vi
   }));
   save();
 }
 
-/* ── RENDER FEED ── */
+/* ═══════════════════════════
+   VIEW COUNTER
+═══════════════════════════ */
+// Track which thought IDs we've already counted this session
+const viewedThisSession = new Set();
+
+function recordView(id) {
+  if (viewedThisSession.has(id)) return;
+  viewedThisSession.add(id);
+  const t = thoughts.find(x => x.id === id);
+  if (!t || t.owner === user) return; // don't count own views
+  if (!t.views) t.views = 0;
+  t.views++;
+  save();
+}
+
+/* ═══════════════════════════
+   RENDER FEED
+═══════════════════════════ */
 function renderFeed() {
   const feed = document.getElementById('feed');
   if (!thoughts.length) {
@@ -568,7 +718,27 @@ function renderFeed() {
     return;
   }
   feed.innerHTML = '';
-  thoughts.slice().reverse().forEach(t => feed.appendChild(makeCard(t)));
+  thoughts.slice().reverse().forEach(t => {
+    const card = makeCard(t);
+    feed.appendChild(card);
+    // record view after card is in DOM (IntersectionObserver)
+    observeCard(card, t.id);
+  });
+}
+
+// Count a view when card scrolls into view
+const viewObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.dataset.thoughtId;
+      if (id) recordView(id);
+    }
+  });
+}, { threshold: 0.5 });
+
+function observeCard(card, id) {
+  card.dataset.thoughtId = id;
+  viewObserver.observe(card);
 }
 
 function makeCard(t) {
@@ -576,8 +746,19 @@ function makeCard(t) {
   div.className = 'card';
   div.id = 'c_' + t.id;
 
-  const mine = user && t.owner === user;
-  const ago  = timeAgo(t.ts);
+  const mine   = user && t.owner === user;
+  const ago    = timeAgo(t.ts);
+  const views  = t.views || 0;
+
+  // Check if user already sent a request to this thought's owner
+  const alreadySent = user && t.owner && t.owner !== user &&
+    requests.some(r => r.from === user && r.to === t.owner);
+
+  const msgDisabled = !user || !t.owner || t.owner === user || alreadySent;
+  const msgTitle    = alreadySent ? 'Request already sent'
+                    : !user       ? 'Sign in to message'
+                    : !t.owner    ? 'Demo thought'
+                    : '';
 
   div.innerHTML = `
     <div class="card-head">
@@ -597,13 +778,34 @@ function makeCard(t) {
       <button class="rbtn ${t.rx==='lo'?'on-love':''}"    onclick="react('${t.id}','lo')">❤️ <span class="n">${t.lo}</span></button>
       <button class="rbtn ${t.rx==='di'?'on-dislike':''}" onclick="react('${t.id}','di')">👎 <span class="n">${t.di}</span></button>
       <button class="donate-btn" onclick="openDonate('${t.id}')">💙 Donate</button>
+      ${!mine ? `<button class="msg-btn" onclick="openMsgModal('${t.id}')" ${msgDisabled?'disabled':''} title="${msgTitle}">✉ Message</button>` : ''}
+      ${mine ? `<span class="views-chip">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        ${views} views
+      </span>` : ''}
     </div>
-    ${mine ? '<div class="owner-mark">◆ your thought</div>' : ''}
+    ${mine ? `
+    <div class="owner-bar">
+      <span class="label">◆ your thought</span>
+      <span>👍 ${t.li}</span>
+      <span>❤️ ${t.lo}</span>
+      <span>👎 ${t.di}</span>
+      <span style="margin-left:auto;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        ${views}
+      </span>
+    </div>` : ''}
   `;
   return div;
 }
 
-/* ── COMPOSE ── */
+/* ═══════════════════════════
+   COMPOSE
+═══════════════════════════ */
 const ta = document.getElementById('ta');
 const cc = document.getElementById('cc');
 
@@ -616,17 +818,22 @@ ta.addEventListener('input', () => {
 document.getElementById('btnPost').onclick = () => {
   if (!user) { openAuth('in'); return; }
   const txt = ta.value.trim();
-  if (!txt)        { toast('Write something first.', 'err'); return; }
+  if (!txt)         { toast('Write something first.', 'err'); return; }
   if (txt.length > 500) { toast('Max 500 characters.', 'err'); return; }
 
-  thoughts.push({ id: 'th' + Date.now(), text: txt, ts: Date.now(), li:0, lo:0, di:0, rx:null, owner: user });
+  thoughts.push({
+    id:'th'+Date.now(), text:txt, ts:Date.now(),
+    li:0, lo:0, di:0, rx:null, owner:user, views:0
+  });
   save();
   ta.value = ''; cc.textContent = '0 / 500'; cc.className = 'char';
   renderFeed();
   toast('Your thought is out there — anonymously ✦', 'ok');
 };
 
-/* ── REACTIONS ── */
+/* ═══════════════════════════
+   REACTIONS
+═══════════════════════════ */
 function react(id, type) {
   if (!user) { openAuth('in'); return; }
   const t = thoughts.find(x => x.id === id);
@@ -636,10 +843,16 @@ function react(id, type) {
   if (t.rx) t[t.rx]++;
   save();
   const old = document.getElementById('c_' + id);
-  if (old) old.replaceWith(makeCard(t));
+  if (old) {
+    const fresh = makeCard(t);
+    observeCard(fresh, t.id);
+    old.replaceWith(fresh);
+  }
 }
 
-/* ── AUTH ── */
+/* ═══════════════════════════
+   AUTH
+═══════════════════════════ */
 document.getElementById('btnSignIn').onclick = () => openAuth('in');
 document.getElementById('btnJoin').onclick   = () => openAuth('up');
 
@@ -661,20 +874,18 @@ function setTab(m) {
   authMode = m;
   document.getElementById('tabA').className = 'tab' + (m==='in'?' on':'');
   document.getElementById('tabB').className = 'tab' + (m==='up'?' on':'');
-  document.getElementById('authH').textContent    = m==='in' ? 'Sign in'        : 'Create account';
-  document.getElementById('authSub').textContent  = m==='in' ? 'Post thoughts anonymously. No phone number needed.' : 'Just your email. No phone. No real name.';
-  document.getElementById('authGo').textContent   = m==='in' ? 'Sign in'        : 'Create account';
-  document.getElementById('fErr').style.display   = 'none';
+  document.getElementById('authH').textContent   = m==='in' ? 'Sign in' : 'Create account';
+  document.getElementById('authSub').textContent = m==='in' ? 'Post thoughts anonymously. No phone number needed.' : 'Just your email. No phone. No real name.';
+  document.getElementById('authGo').textContent  = m==='in' ? 'Sign in' : 'Create account';
+  document.getElementById('fErr').style.display  = 'none';
 }
 
 function doAuth() {
   const email = document.getElementById('fEmail').value.trim().toLowerCase();
   const pass  = document.getElementById('fPass').value;
-  const err   = document.getElementById('fErr');
-
-  if (!email || !pass)       { showErr('Fill in all fields.'); return; }
-  if (!email.includes('@'))  { showErr('Enter a valid email.'); return; }
-  if (pass.length < 6)       { showErr('Password needs 6+ characters.'); return; }
+  if (!email || !pass)      { showErr('Fill in all fields.'); return; }
+  if (!email.includes('@')) { showErr('Enter a valid email.'); return; }
+  if (pass.length < 6)      { showErr('Password needs 6+ characters.'); return; }
 
   if (authMode === 'up') {
     if (users[email]) { showErr('Account already exists. Sign in instead.'); return; }
@@ -701,37 +912,43 @@ document.getElementById('fPass').addEventListener('keydown', e => { if (e.key===
 function setLoggedIn(email) {
   user = email;
   document.getElementById('btnSignIn').style.display = 'none';
-  document.getElementById('btnJoin').textContent  = 'My profile';
-  document.getElementById('btnJoin').className    = 'btn btn-outline';
-  document.getElementById('btnJoin').onclick      = openSidebar;
+  document.getElementById('btnJoin').textContent = 'My profile';
+  document.getElementById('btnJoin').className   = 'btn btn-outline';
+  document.getElementById('btnJoin').onclick     = openSidebar;
+  document.getElementById('bellWrap').style.display = '';
+  updateBellBadge();
   renderFeed();
 }
 
 function doLogout() {
   user = null;
   document.getElementById('btnSignIn').style.display = '';
-  document.getElementById('btnJoin').textContent  = 'Join free';
-  document.getElementById('btnJoin').className    = 'btn btn-cyan';
-  document.getElementById('btnJoin').onclick      = () => openAuth('up');
-  closeSidebar();
+  document.getElementById('btnJoin').textContent = 'Join free';
+  document.getElementById('btnJoin').className   = 'btn btn-cyan';
+  document.getElementById('btnJoin').onclick     = () => openAuth('up');
+  document.getElementById('bellWrap').style.display = 'none';
+  closeSidebar(); closeInbox();
   renderFeed();
   toast('Signed out.', '');
 }
 
-/* ── PROFILE SIDEBAR ── */
+/* ═══════════════════════════
+   PROFILE SIDEBAR
+═══════════════════════════ */
 function openSidebar() {
   if (!user) { openAuth('in'); return; }
-
   document.getElementById('sbEmail').textContent = user;
 
-  const mine  = thoughts.filter(t => t.owner === user);
-  const reacts= mine.reduce((s,t) => s + t.li + t.lo + t.di, 0);
+  const mine   = thoughts.filter(t => t.owner === user);
+  const reacts = mine.reduce((s,t) => s + t.li + t.lo + t.di, 0);
+  const views  = mine.reduce((s,t) => s + (t.views||0), 0);
+
   document.getElementById('sbCount').textContent  = mine.length;
+  document.getElementById('sbViews').textContent  = views;
   document.getElementById('sbReacts').textContent = reacts;
 
   const list = document.getElementById('sbList');
   list.innerHTML = '';
-
   if (!mine.length) {
     list.innerHTML = `<p style="font-size:12px;color:var(--text3);text-align:center;padding:20px 0;">No thoughts yet.</p>`;
   } else {
@@ -740,10 +957,11 @@ function openSidebar() {
       el.className = 'sb-thought';
       el.innerHTML = `
         <div class="sb-thought-text">${esc(t.text.length>100 ? t.text.slice(0,100)+'…' : t.text)}</div>
-        <div class="sb-thought-reacts">
+        <div class="sb-thought-meta">
           <span>👍 ${t.li}</span>
           <span>❤️ ${t.lo}</span>
           <span>👎 ${t.di}</span>
+          <span class="views-tag">👁 ${t.views||0} views</span>
           <span style="margin-left:auto;">${timeAgo(t.ts)}</span>
         </div>
       `;
@@ -760,67 +978,330 @@ function closeSidebar() {
   document.getElementById('sidebar').classList.remove('show');
 }
 
-/* ── DONATE ── */
+/* ═══════════════════════════
+   MESSAGE REQUESTS
+═══════════════════════════ */
+function openMsgModal(thoughtId) {
+  if (!user) { openAuth('in'); return; }
+  const t = thoughts.find(x => x.id === thoughtId);
+  if (!t || !t.owner || t.owner === user) return;
+
+  msgTarget = t.owner;
+  document.getElementById('msgSub').textContent = 'Your message will be anonymous. You can only send one request to this person.';
+  document.getElementById('msgText').value = '';
+  document.getElementById('msgErr').style.display = 'none';
+  document.getElementById('msgBg').classList.add('show');
+  setTimeout(() => document.getElementById('msgText').focus(), 80);
+}
+
+function closeMsgModal() {
+  document.getElementById('msgBg').classList.remove('show');
+  msgTarget = null;
+}
+
+function sendMsgRequest() {
+  if (!user || !msgTarget) return;
+  const msg = document.getElementById('msgText').value.trim();
+  const err = document.getElementById('msgErr');
+
+  if (!msg) { err.textContent = 'Write your message first.'; err.style.display = 'block'; return; }
+  if (msg.length < 5) { err.textContent = 'Message too short.'; err.style.display = 'block'; return; }
+
+  // Find thought snippet for context
+  const t = thoughts.find(x => x.owner === msgTarget);
+  const snippet = t ? t.text.slice(0,60)+'…' : '';
+
+  requests.push({
+    id:    'req' + Date.now(),
+    from:  user,
+    to:    msgTarget,
+    msg,
+    thoughtSnippet: snippet,
+    ts:    Date.now(),
+    status:'pending'
+  });
+  save();
+  closeMsgModal();
+  renderFeed(); // refresh to disable msg button
+  toast('Message request sent!', 'ok');
+}
+
+/* ═══════════════════════════
+   INBOX
+═══════════════════════════ */
+function updateBellBadge() {
+  if (!user) return;
+  const pending = requests.filter(r => r.to === user && r.status === 'pending').length;
+  const badge   = document.getElementById('bellBadge');
+  badge.textContent = pending > 9 ? '9+' : pending;
+  badge.className   = 'bell-badge' + (pending > 0 ? ' show' : '');
+}
+
+function openInbox() {
+  switchInboxTab('requests');
+  document.getElementById('inboxSidebar').classList.add('show');
+}
+
+function closeInbox() {
+  document.getElementById('inboxSidebar').classList.remove('show');
+}
+
+function switchInboxTab(tab) {
+  document.getElementById('itabReq').className   = 'inbox-tab' + (tab==='requests'?' on':'');
+  document.getElementById('itabChats').className = 'inbox-tab' + (tab==='chats'?' on':'');
+  document.getElementById('inboxRequests').style.display = tab==='requests' ? '' : 'none';
+  document.getElementById('inboxChats').style.display    = tab==='chats'    ? '' : 'none';
+  if (tab === 'requests') renderRequests();
+  else renderChats();
+}
+
+function renderRequests() {
+  if (!user) return;
+  const container = document.getElementById('inboxRequests');
+  // Incoming = requests TO me
+  const incoming = requests.filter(r => r.to === user).sort((a,b) => b.ts - a.ts);
+  // Outgoing = requests FROM me
+  const outgoing = requests.filter(r => r.from === user).sort((a,b) => b.ts - a.ts);
+
+  const pendingCount = incoming.filter(r => r.status === 'pending').length;
+  document.getElementById('reqDot').className = 'dot' + (pendingCount > 0 ? ' show' : '');
+
+  let html = '';
+  if (incoming.length === 0 && outgoing.length === 0) {
+    html = `<p style="font-size:12px;color:var(--text3);text-align:center;padding:30px 0;">No message requests yet.</p>`;
+  }
+
+  if (incoming.length > 0) {
+    html += `<div class="sb-section-title" style="margin-bottom:8px;">Received (${incoming.length})</div>`;
+    incoming.forEach(r => {
+      const isPending = r.status === 'pending';
+      html += `<div class="req-card ${isPending?'unread':''}">
+        <div class="req-card-head">
+          <span class="req-from">Anonymous person</span>
+          <span class="req-time">${timeAgo(r.ts)}</span>
+        </div>
+        <div class="req-msg">${esc(r.msg)}</div>
+        ${r.thoughtSnippet ? `<div class="req-about">"${esc(r.thoughtSnippet)}"</div>` : ''}
+        ${isPending
+          ? `<div class="req-actions">
+               <button class="btn btn-ghost" onclick="declineRequest('${r.id}')">Decline</button>
+               <button class="btn btn-blue"  onclick="acceptRequest('${r.id}')">Accept & chat</button>
+             </div>`
+          : `<div style="font-size:11px;color:var(--text3);">
+               ${r.status === 'accepted'
+                 ? `<span style="color:var(--green);">✓ Accepted</span>
+                    <button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;margin-left:8px;" onclick="openChatById('${r.id}')">Open chat</button>`
+                 : '<span style="color:var(--red);">✗ Declined</span>'}
+             </div>`
+        }
+      </div>`;
+    });
+  }
+
+  if (outgoing.length > 0) {
+    html += `<div class="sb-section-title" style="margin-top:16px;margin-bottom:8px;">Sent (${outgoing.length})</div>`;
+    outgoing.forEach(r => {
+      const statusColor = r.status==='accepted' ? 'var(--green)' : r.status==='declined' ? 'var(--red)' : 'var(--text3)';
+      const statusText  = r.status==='accepted' ? '✓ Accepted' : r.status==='declined' ? '✗ Declined' : '⏳ Pending';
+      html += `<div class="req-card">
+        <div class="req-card-head">
+          <span class="req-from">To anonymous member</span>
+          <span class="req-time">${timeAgo(r.ts)}</span>
+        </div>
+        <div class="req-msg">${esc(r.msg)}</div>
+        <div style="font-size:11px;color:${statusColor};">
+          ${statusText}
+          ${r.status==='accepted' ? `<button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;margin-left:8px;" onclick="openChatById('${r.id}')">Open chat</button>` : ''}
+        </div>
+      </div>`;
+    });
+  }
+
+  container.innerHTML = html;
+  updateBellBadge();
+}
+
+function renderChats() {
+  if (!user) return;
+  const container = document.getElementById('inboxChats');
+  const myChats   = chats.filter(c => c.participants.includes(user));
+
+  const unread = myChats.filter(c => {
+    const last = c.messages[c.messages.length-1];
+    return last && last.from !== user && !last.read;
+  }).length;
+  document.getElementById('chatDot').className = 'dot' + (unread > 0 ? ' show' : '');
+
+  if (!myChats.length) {
+    container.innerHTML = `<p style="font-size:12px;color:var(--text3);text-align:center;padding:30px 0;">No active chats yet.<br>Accept a message request to start chatting.</p>`;
+    return;
+  }
+
+  let html = '';
+  myChats.slice().reverse().forEach(c => {
+    const last    = c.messages[c.messages.length-1];
+    const preview = last ? esc(last.text.slice(0,60)) : 'No messages yet';
+    const mine    = last && last.from === user;
+    html += `<div class="req-card" style="cursor:pointer;" onclick="openChatById('${c.id}')">
+      <div class="req-card-head">
+        <span class="req-from">Anonymous chat</span>
+        <span class="req-time">${last ? timeAgo(last.ts) : ''}</span>
+      </div>
+      <div class="req-msg" style="color:var(--text2);">${mine?'You: ':''}${preview}${last&&last.text.length>60?'…':''}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function acceptRequest(reqId) {
+  const req = requests.find(r => r.id === reqId);
+  if (!req) return;
+  req.status = 'accepted';
+
+  // Create chat thread
+  const chatId = 'chat' + Date.now();
+  chats.push({
+    id: chatId,
+    participants: [req.from, req.to],
+    reqId,
+    messages: []
+  });
+  save();
+  renderRequests();
+  toast('Request accepted — you can now chat!', 'ok');
+  // Open chat immediately
+  openChatById(chatId);
+}
+
+function declineRequest(reqId) {
+  const req = requests.find(r => r.id === reqId);
+  if (!req) return;
+  req.status = 'declined';
+  save();
+  renderRequests();
+  toast('Request declined.', '');
+}
+
+/* ═══════════════════════════
+   CHAT
+═══════════════════════════ */
+function openChatById(id) {
+  // id could be chatId or reqId
+  let chat = chats.find(c => c.id === id) || chats.find(c => c.reqId === id);
+  if (!chat) return;
+
+  activeChatId = chat.id;
+  closeInbox();
+
+  // Mark last message as read
+  if (chat.messages.length) chat.messages[chat.messages.length-1].read = true;
+  save();
+
+  document.getElementById('chatWith').textContent = 'All messages are anonymous';
+  renderChatThread(chat);
+  document.getElementById('chatBg').classList.add('show');
+  setTimeout(() => document.getElementById('chatInput').focus(), 80);
+}
+
+function renderChatThread(chat) {
+  const thread = document.getElementById('chatThread');
+  thread.innerHTML = '';
+
+  if (!chat.messages.length) {
+    thread.innerHTML = `<p style="font-size:12px;color:var(--text3);text-align:center;padding:20px 0;">Say hello — nobody knows who you are.</p>`;
+    return;
+  }
+
+  chat.messages.forEach(m => {
+    const mine = m.from === user;
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `
+      <div class="chat-msg ${mine?'mine':'theirs'}">${esc(m.text)}</div>
+      <div class="chat-meta ${mine?'':'theirs'}">${timeAgo(m.ts)}</div>
+    `;
+    thread.appendChild(wrap);
+  });
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function sendChatMsg() {
+  if (!user || !activeChatId) return;
+  const input = document.getElementById('chatInput');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  const chat = chats.find(c => c.id === activeChatId);
+  if (!chat) return;
+
+  chat.messages.push({ from: user, text, ts: Date.now(), read: false });
+  save();
+  input.value = '';
+  renderChatThread(chat);
+}
+
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendChatMsg();
+});
+
+function closeChat() {
+  document.getElementById('chatBg').classList.remove('show');
+  activeChatId = null;
+}
+
+/* ═══════════════════════════
+   DONATE
+═══════════════════════════ */
 function openDonate(id) {
   donateId = id; pickedAmt = null;
   document.querySelectorAll('.amt').forEach(b => b.classList.remove('picked'));
   document.getElementById('customAmt').value = '';
   document.getElementById('donateBg').classList.add('show');
 }
-
-function closeDonate() {
-  document.getElementById('donateBg').classList.remove('show');
-  donateId = null;
-}
-
+function closeDonate() { document.getElementById('donateBg').classList.remove('show'); donateId = null; }
 function pickAmt(el, v) {
   document.querySelectorAll('.amt').forEach(b => b.classList.remove('picked'));
-  el.classList.add('picked');
-  pickedAmt = v;
+  el.classList.add('picked'); pickedAmt = v;
   document.getElementById('customAmt').value = '';
 }
-
 function sendDonate() {
   const custom = document.getElementById('customAmt').value;
-  const amt = custom || pickedAmt;
+  const amt    = custom || pickedAmt;
   if (!amt || parseFloat(amt) <= 0) { toast('Pick or enter an amount.', 'err'); return; }
   closeDonate();
   toast('$' + parseFloat(amt).toFixed(2) + ' sent anonymously 💙', 'ok');
 }
 
-/* ── UTILS ── */
+/* ═══════════════════════════
+   UTILS
+═══════════════════════════ */
 function timeAgo(ts) {
-  const d = Date.now() - ts;
-  const m = Math.floor(d/60000);
-  const h = Math.floor(d/3600000);
-  const dy= Math.floor(d/86400000);
-  if (m < 1)  return 'just now';
-  if (m < 60) return m + 'm ago';
-  if (h < 24) return h + 'h ago';
-  return dy + 'd ago';
+  const d = Date.now()-ts, m=Math.floor(d/60000), h=Math.floor(d/3600000), dy=Math.floor(d/86400000);
+  if (m<1) return 'just now'; if (m<60) return m+'m ago'; if (h<24) return h+'h ago'; return dy+'d ago';
 }
-
 function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-
 let toastTimer;
 function toast(msg, type) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className   = 'toast show ' + (type||'');
+  el.textContent = msg; el.className = 'toast show '+(type||'');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
 /* backdrop close */
-document.getElementById('authBg').addEventListener('click', e => { if (e.target.id==='authBg') closeAuth(); });
-document.getElementById('donateBg').addEventListener('click', e => { if (e.target.id==='donateBg') closeDonate(); });
+document.getElementById('authBg').addEventListener('click',   e => { if(e.target.id==='authBg')   closeAuth(); });
+document.getElementById('donateBg').addEventListener('click', e => { if(e.target.id==='donateBg') closeDonate(); });
+document.getElementById('msgBg').addEventListener('click',    e => { if(e.target.id==='msgBg')    closeMsgModal(); });
+document.getElementById('chatBg').addEventListener('click',   e => { if(e.target.id==='chatBg')   closeChat(); });
+document.getElementById('sbBg').addEventListener('click',     () => closeSidebar());
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeAuth(); closeDonate(); closeSidebar(); }
+  if (e.key==='Escape') { closeAuth(); closeDonate(); closeSidebar(); closeInbox(); closeChat(); closeMsgModal(); }
 });
 
-/* ── INIT ── */
+/* ═══════════════════════════
+   INIT
+═══════════════════════════ */
 renderFeed();
 </script>
 </body>
