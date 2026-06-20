@@ -381,6 +381,7 @@ onAuthStateChanged(auth, async u => {
     document.getElementById('btnJoin').onclick         = () => openAuth('up');
     document.getElementById('bellWrap').style.display  = 'none';
     if (unsubInbox) { unsubInbox(); unsubInbox = null; }
+    if (unsubChatListener) { unsubChatListener(); unsubChatListener = null; }
     renderFeed();
   }
 });
@@ -682,20 +683,48 @@ window.sendMsgRequest = sendMsgRequest;
 /* ══════════════════════════════
    INBOX — REAL-TIME LISTENER
 ══════════════════════════════ */
+let unsubChatListener = null;
+
 function startInboxListener() {
   if (!user || unsubInbox) return;
-  const q = query(requestsCol, where('to','==',user.uid), where('status','==','pending'));
-  unsubInbox = onSnapshot(q, snap => {
+
+  // Watch pending requests
+  const qReq = query(requestsCol, where('to','==',user.uid), where('status','==','pending'));
+  unsubInbox = onSnapshot(qReq, snap => {
     const count = snap.size;
-    const badge = document.getElementById('bellBadge');
-    badge.textContent = count > 9 ? '9+' : count;
-    badge.className   = 'bell-badge'+(count>0?' show':'');
     document.getElementById('reqDot').className = 'dot'+(count>0?' show':'');
+    updateBellBadge();
+  });
+
+  // Watch chats for unread messages
+  const qChat = query(chatsCol, where('participants','array-contains',user.uid));
+  unsubChatListener = onSnapshot(qChat, snap => {
+    let unread = 0;
+    snap.forEach(d => {
+      const c    = d.data();
+      const msgs = c.messages || [];
+      // count messages not from me that are unread
+      msgs.forEach(m => {
+        if (m.from !== user.uid && !m.readBy?.includes(user.uid)) unread++;
+      });
+    });
+    document.getElementById('chatDot').className = 'dot'+(unread>0?' show':'');
+    updateBellBadge();
   });
 }
 
+function updateBellBadge() {
+  const reqDot  = document.getElementById('reqDot').classList.contains('show');
+  const chatDot = document.getElementById('chatDot').classList.contains('show');
+  const badge   = document.getElementById('bellBadge');
+  const hasAny  = reqDot || chatDot;
+  badge.textContent = '●';
+  badge.className   = 'bell-badge'+(hasAny?' show':'');
+}
+
 window.openInbox = () => {
-  switchInboxTab('requests');
+  const chatDot = document.getElementById('chatDot').classList.contains('show');
+  switchInboxTab(chatDot ? 'chats' : 'requests');
   document.getElementById('inboxSidebar').classList.add('show');
 };
 function closeInbox() { document.getElementById('inboxSidebar').classList.remove('show'); }
@@ -780,10 +809,23 @@ async function loadChats() {
   let html = '';
   snap.forEach(d => {
     const c    = d.data();
+    const msgs = c.messages || [];
     const last = c.lastMsg || 'No messages yet';
-    html += `<div class="req-card" style="cursor:pointer;" onclick="openChatById('${d.id}')">
-      <div class="req-card-head"><span class="req-from">Anonymous chat</span><span class="req-time">${timeAgo(c.updatedAt?.toDate?c.updatedAt.toDate():new Date())}</span></div>
-      <div class="req-msg" style="color:var(--text2);">${esc(last.length>60?last.slice(0,60)+'…':last)}</div>
+    // count unread messages not from me
+    const unread = msgs.filter(m => m.from !== user.uid && !m.readBy?.includes(user.uid)).length;
+    const isUnread = unread > 0;
+    html += `<div class="req-card${isUnread?' unread':''}" style="cursor:pointer;position:relative;" onclick="openChatById('${d.id}')">
+      <div class="req-card-head">
+        <span class="req-from" style="${isUnread?'color:var(--text);font-weight:600;':''}">Anonymous chat</span>
+        <span class="req-time">${timeAgo(c.updatedAt?.toDate?c.updatedAt.toDate():new Date())}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div class="req-msg" style="color:${isUnread?'var(--text)':'var(--text2)'};font-weight:${isUnread?'500':'400'};flex:1;">
+          ${esc(last.length>60?last.slice(0,60)+'…':last)}
+        </div>
+        ${isUnread ? `<span style="background:var(--blue);color:white;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0;">${unread}</span>` : ''}
+      </div>
+      ${isUnread ? `<div style="font-size:11px;color:var(--blue);margin-top:6px;">● New message</div>` : ''}
     </div>`;
   });
   container.innerHTML = html;
@@ -820,6 +862,21 @@ window.openChatById = async id => {
   if (unsubChat) { unsubChat(); unsubChat = null; }
 
   const chatRef = doc(db,'chats',id);
+
+  // Mark all messages as read when opening chat
+  const chatSnap = await getDoc(chatRef);
+  if (chatSnap.exists()) {
+    const msgs = chatSnap.data().messages || [];
+    let changed = false;
+    msgs.forEach(m => {
+      if (m.from !== user.uid) {
+        if (!m.readBy) m.readBy = [];
+        if (!m.readBy.includes(user.uid)) { m.readBy.push(user.uid); changed = true; }
+      }
+    });
+    if (changed) await updateDoc(chatRef, { messages: msgs });
+  }
+
   unsubChat = onSnapshot(chatRef, snap => {
     if (!snap.exists()) return;
     const data = snap.data();
@@ -852,7 +909,7 @@ window.sendChatMsg = async () => {
   const snap    = await getDoc(chatRef);
   if (!snap.exists()) return;
   const msgs = snap.data().messages || [];
-  msgs.push({ from:user.uid, text, ts:new Date() });
+  msgs.push({ from:user.uid, text, ts:new Date(), readBy:[user.uid] });
   await updateDoc(chatRef, { messages:msgs, lastMsg:text, updatedAt:serverTimestamp() });
 };
 
