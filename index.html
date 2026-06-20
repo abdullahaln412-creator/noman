@@ -1609,7 +1609,6 @@ function closeDonate() {
   document.getElementById('donateBg').classList.remove('show');
   donateThoughtId = null;
 }
-window.closeDonate = closeDonate;
 
 async function sendDonate() {
   const custom = document.getElementById('customAmt').value;
@@ -1656,7 +1655,6 @@ async function sendDonate() {
     toast('$'+parseFloat(amt).toFixed(2)+' donated anonymously 💙', 'ok');
   }, 1200);
 }
-window.sendDonate = sendDonate;
 
 window.pickAmt = (el, v) => {
   document.querySelectorAll('.amt').forEach(b=>b.classList.remove('picked'));
@@ -1835,7 +1833,6 @@ function closeComments() {
   activeThoughtId = null;
   replyingTo      = null;
 }
-window.closeComments = closeComments;
 
 /* ── BACKDROP CLOSE & KEYBOARD ── */
 document.getElementById('authBg').addEventListener('click',   e=>{if(e.target.id==='authBg')   closeAuth();});
@@ -1848,10 +1845,10 @@ document.addEventListener('keydown', e=>{
 });
 
 /* expose globals needed by inline onclick */
-window.closeAuth=closeAuth; window.closeMsgModal=closeMsgModal; window.closeDonate=closeDonate; window.closeComments=closeComments;
+window.closeAuth=closeAuth; window.closeMsgModal=closeMsgModal;
 window.closeChat=closeChat; window.doLogout=doLogout; window.openSidebar=openSidebar;
-window.closeSidebar=closeSidebar; window.openInbox=openInbox; window.closeInbox=closeInbox;
-window.sendDonate=sendDonate; window.setTab=setTab; window.doAuth=doAuth;
+window.closeSidebar=closeSidebar; window.closeInbox=closeInbox;
+window.setTab=setTab; window.doAuth=doAuth;
 </script>
 </body>
 </html>
