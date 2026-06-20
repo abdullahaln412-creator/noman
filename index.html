@@ -24,11 +24,30 @@ body { background:var(--bg0); color:var(--text); font-family:'Inter','Segoe UI',
 .logo-dot { width:7px; height:7px; background:var(--cyan); border-radius:50%; animation:blink 2.5s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .nav-actions { display:flex; align-items:center; gap:8px; }
-.bell-wrap { position:relative; cursor:pointer; }
-.bell-btn { width:34px; height:34px; background:transparent; border:1px solid var(--bdr); border-radius:var(--r); color:var(--text2); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s; font-size:15px; }
-.bell-btn:hover { background:var(--bg2); color:var(--text); }
-.bell-badge { position:absolute; top:-4px; right:-4px; background:var(--red); color:#fff; font-size:10px; font-weight:600; min-width:16px; height:16px; border-radius:8px; display:none; align-items:center; justify-content:center; padding:0 4px; }
-.bell-badge.show { display:flex; }
+.nav-icon-wrap { position:relative; }
+.nav-icon-btn {
+  width:40px; height:40px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; cursor:pointer; border:none;
+  transition:all 0.2s; position:relative;
+}
+.notif-btn  { background:rgba(206,145,120,0.15); color:#ce9178; }
+.notif-btn:hover  { background:rgba(206,145,120,0.3); transform:scale(1.08); }
+.msg-btn-nav { background:rgba(86,156,214,0.15); color:#569cd6; }
+.msg-btn-nav:hover { background:rgba(86,156,214,0.3); transform:scale(1.08); }
+.profile-btn-nav { background:rgba(78,201,176,0.15); color:#4ec9b0; }
+.profile-btn-nav:hover { background:rgba(78,201,176,0.3); transform:scale(1.08); }
+.nav-badge {
+  position:absolute; top:-4px; right:-4px;
+  background:var(--red); color:#fff;
+  font-size:10px; font-weight:700;
+  min-width:17px; height:17px; border-radius:9px;
+  display:none; align-items:center; justify-content:center;
+  padding:0 4px; border:2px solid var(--bg1);
+}
+.nav-badge.show { display:flex; }
+/* keep old bell-badge for compat */
+.bell-badge { display:none; }
 
 /* BUTTONS */
 .btn { border:none; border-radius:var(--r); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; padding:6px 14px; transition:all 0.15s; line-height:1; }
@@ -227,51 +246,122 @@ textarea::placeholder { color:var(--text3); }
   padding-top:10px; border-top:1px solid var(--bdr);
 }
 
-/* COMMENTS */
-.comment-card {
-  background:var(--bg1); border:1px solid var(--bdr);
-  border-radius:var(--r2); padding:14px 16px; margin-bottom:10px;
+/* ── COMMENTS BOTTOM SHEET (Instagram style) ── */
+.comment-sheet-bg {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.6); z-index:300;
+  backdrop-filter:blur(2px);
 }
-.comment-card.reply {
-  margin-left:24px; border-left:2px solid var(--cyan-bdr);
-  background:var(--bg2);
+.comment-sheet-bg.show { display:block; }
+
+.comment-sheet {
+  position:fixed; left:0; right:0; bottom:0; z-index:301;
+  background:var(--bg1);
+  border-radius:20px 20px 0 0;
+  border-top:1px solid var(--bdr2);
+  max-height:80vh;
+  display:flex; flex-direction:column;
+  transform:translateY(100%);
+  transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
 }
-.comment-head {
+.comment-sheet.show { transform:translateY(0); }
+
+.comment-sheet-handle {
+  width:40px; height:4px; background:var(--bg3);
+  border-radius:2px; margin:12px auto 0; flex-shrink:0;
+}
+
+.comment-sheet-header {
   display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:8px;
+  padding:12px 16px 10px; border-bottom:1px solid var(--bdr);
+  flex-shrink:0;
 }
-.comment-anon { font-size:11px; color:var(--text3); display:flex; align-items:center; gap:5px; }
-.comment-time { font-size:11px; color:var(--text3); }
-.comment-body { font-size:13px; color:var(--text); line-height:1.6; margin-bottom:10px; }
-.comment-actions { display:flex; align-items:center; gap:8px; }
-.comment-like-btn {
-  display:flex; align-items:center; gap:4px;
+.comment-sheet-title { font-size:14px; font-weight:600; color:var(--text); }
+.comment-sheet-close {
   background:var(--bg2); border:1px solid var(--bdr);
-  border-radius:20px; padding:3px 10px;
-  font-size:12px; color:var(--text2); cursor:pointer;
-  transition:all 0.15s; font-family:inherit;
+  color:var(--text2); width:28px; height:28px;
+  border-radius:50%; cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.15s; flex-shrink:0;
 }
-.comment-like-btn:hover { border-color:var(--bdr2); color:var(--red); }
-.comment-like-btn.liked { border-color:rgba(244,71,71,0.4); background:rgba(244,71,71,0.08); color:var(--red); }
+.comment-sheet-close:hover { color:var(--text); background:var(--bg3); }
+
+.comment-sheet-list {
+  flex:1; overflow-y:auto; padding:12px 16px;
+}
+
+.comment-sheet-input {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 16px 16px; border-top:1px solid var(--bdr);
+  background:var(--bg1); flex-shrink:0;
+}
+.comment-sheet-input input {
+  flex:1; background:var(--bg2);
+  border:1px solid var(--bdr); border-radius:20px;
+  color:var(--text); font-family:inherit; font-size:13px;
+  padding:9px 16px; outline:none; transition:border-color 0.15s;
+}
+.comment-sheet-input input:focus { border-color:var(--cyan-bdr); }
+.comment-sheet-input input::placeholder { color:var(--text3); }
+.comment-post-btn {
+  background:none; border:none; color:var(--cyan);
+  font-size:13px; font-weight:600; cursor:pointer;
+  font-family:inherit; padding:0 4px; white-space:nowrap;
+  transition:opacity 0.15s;
+}
+.comment-post-btn:hover { opacity:0.7; }
+
+/* Comment items */
+.comment-item {
+  display:flex; gap:10px; margin-bottom:16px;
+}
+.comment-avatar {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--bdr);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; flex-shrink:0;
+}
+.comment-content { flex:1; min-width:0; }
+.comment-name { font-size:12px; font-weight:600; color:var(--text2); margin-bottom:3px; }
+.comment-body { font-size:13px; color:var(--text); line-height:1.55; margin-bottom:6px; word-break:break-word; }
+.comment-meta { display:flex; align-items:center; gap:12px; }
+.comment-time { font-size:11px; color:var(--text3); }
+.comment-like-btn {
+  display:flex; align-items:center; gap:3px;
+  background:none; border:none; color:var(--text3);
+  font-size:11px; cursor:pointer; font-family:inherit;
+  padding:0; transition:color 0.15s;
+}
+.comment-like-btn:hover { color:var(--red); }
+.comment-like-btn.liked { color:var(--red); }
 .reply-btn {
-  font-size:12px; color:var(--text3); cursor:pointer;
+  font-size:11px; color:var(--text3); cursor:pointer;
   background:none; border:none; font-family:inherit;
-  padding:3px 8px; border-radius:var(--r);
-  transition:color 0.15s;
+  padding:0; transition:color 0.15s;
 }
 .reply-btn:hover { color:var(--cyan); }
-.reply-input-wrap {
-  margin-top:10px; display:none;
-  gap:8px; align-items:center;
+
+/* Replies */
+.replies-wrap { margin-top:10px; margin-left:0; }
+.reply-item { display:flex; gap:8px; margin-bottom:12px; }
+.reply-avatar {
+  width:24px; height:24px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--bdr);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; flex-shrink:0;
 }
-.reply-input-wrap.show { display:flex; }
-.reply-input-wrap input {
-  flex:1; background:var(--bg3); border:1px solid var(--bdr);
-  border-radius:var(--r); color:var(--text); font-family:inherit;
-  font-size:12px; padding:7px 10px; outline:none;
+.reply-input-row {
+  display:none; gap:8px; align-items:center;
+  margin-top:8px; padding-top:8px;
+}
+.reply-input-row.show { display:flex; }
+.reply-input-row input {
+  flex:1; background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:20px; color:var(--text); font-family:inherit;
+  font-size:12px; padding:7px 14px; outline:none;
   transition:border-color 0.15s;
 }
-.reply-input-wrap input:focus { border-color:var(--cyan-bdr); }
+.reply-input-row input:focus { border-color:var(--cyan-bdr); }
 
 /* donate notification in profile */
 .donate-notif {
@@ -298,12 +388,20 @@ textarea::placeholder { color:var(--text3); }
 <body>
 
 <nav class="nav">
-  <div class="logo"><span class="logo-dot"></span>ThoughtFlow</div>
+  <div class="logo" onclick="scrollToTop()" style="cursor:pointer;" title="Back to top"><span class="logo-dot"></span>ThoughtFlow</div>
   <div class="nav-actions">
-    <div class="bell-wrap" id="bellWrap" style="display:none;">
-      <button class="bell-btn" onclick="openInbox()" title="Messages">✉</button>
-      <span class="bell-badge" id="bellBadge"></span>
+    <!-- Notification bell (shown when logged in) -->
+    <div class="nav-icon-wrap" id="notifWrap" style="display:none;">
+      <button class="nav-icon-btn notif-btn" onclick="openNotifs()" title="Notifications">🔔</button>
+      <span class="nav-badge" id="notifBadge"></span>
     </div>
+    <!-- Messages bell (shown when logged in) -->
+    <div class="nav-icon-wrap" id="bellWrap" style="display:none;">
+      <button class="nav-icon-btn msg-btn-nav" onclick="openInbox()" title="Messages">✉️</button>
+      <span class="nav-badge" id="bellBadge"></span>
+    </div>
+    <!-- Profile button (shown when logged in) -->
+    <button class="nav-icon-btn profile-btn-nav" id="btnProfile" style="display:none;" onclick="openSidebar()" title="My profile">👤</button>
     <button class="btn btn-outline" id="btnSignIn">Sign in</button>
     <button class="btn btn-cyan"    id="btnJoin">Join free</button>
   </div>
@@ -438,21 +536,22 @@ textarea::placeholder { color:var(--text3); }
   </div>
 </div>
 
-<!-- COMMENTS PAGE -->
-<div class="profile-page" id="commentsPage" style="z-index:145;">
-  <div class="profile-page-nav">
-    <button class="back-btn" onclick="closeComments()">← Back to feed</button>
-    <span style="font-size:13px;color:var(--text2);">Comments</span>
+<!-- COMMENTS BOTTOM SHEET -->
+<div class="comment-sheet-bg" id="commentSheetBg" onclick="closeComments()"></div>
+<div class="comment-sheet" id="commentSheet">
+  <div class="comment-sheet-handle"></div>
+  <div class="comment-sheet-header">
+    <span class="comment-sheet-title" id="commentCount">Comments</span>
+    <button class="comment-sheet-close" onclick="closeComments()">✕</button>
   </div>
-  <div class="profile-page-body" id="commentsBody" style="max-width:640px;">
-    <div id="commentThoughtPreview" style="margin-bottom:20px;"></div>
-    <div class="field">
-      <label>Add a comment</label>
-      <textarea id="commentInput" placeholder="Share your thoughts on this…" style="min-height:70px;" maxlength="300"></textarea>
-    </div>
-    <button class="btn btn-cyan" style="width:100%;padding:10px;margin-bottom:24px;" onclick="postComment()">Post comment</button>
-    <div class="sb-section-title" style="margin-bottom:12px;" id="commentCount">Comments</div>
-    <div id="commentList"></div>
+  <div class="comment-sheet-list" id="commentList">
+    <div class="loading-spinner"><div class="spinner"></div></div>
+  </div>
+  <div class="comment-sheet-input">
+    <div class="comment-avatar">🌀</div>
+    <input type="text" id="commentInput" placeholder="Add a comment…" maxlength="300"
+           onkeydown="if(event.key==='Enter') postComment()">
+    <button class="comment-post-btn" onclick="postComment()">Post</button>
   </div>
 </div>
 
@@ -485,6 +584,17 @@ textarea::placeholder { color:var(--text3); }
   </div>
   <div id="inboxRequests"></div>
   <div id="inboxChats" style="display:none;"></div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="inbox-sidebar" id="notifSidebar" style="border-right:1px solid var(--bdr2);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div style="font-size:15px;font-weight:600;">Notifications</div>
+    <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="closeNotifs()">✕</button>
+  </div>
+  <div id="notifList">
+    <div class="loading-spinner"><div class="spinner"></div></div>
+  </div>
 </div>
 
 <!-- CHAT MODAL -->
@@ -581,22 +691,24 @@ const chatsCol     = collection(db, 'chats');
 onAuthStateChanged(auth, async u => {
   if (u) {
     user = u;
-    document.getElementById('btnSignIn').style.display = 'none';
-    document.getElementById('btnJoin').textContent     = 'My profile';
-    document.getElementById('btnJoin').className       = 'btn btn-outline';
-    document.getElementById('btnJoin').onclick         = openSidebar;
-    document.getElementById('bellWrap').style.display  = '';
+    document.getElementById('btnSignIn').style.display  = 'none';
+    document.getElementById('btnJoin').style.display    = 'none';
+    document.getElementById('bellWrap').style.display   = '';
+    document.getElementById('notifWrap').style.display  = '';
+    document.getElementById('btnProfile').style.display = '';
     startInboxListener();
+    startNotifListener();
     renderFeed();
   } else {
     user = null;
-    document.getElementById('btnSignIn').style.display = '';
-    document.getElementById('btnJoin').textContent     = 'Join free';
-    document.getElementById('btnJoin').className       = 'btn btn-cyan';
-    document.getElementById('btnJoin').onclick         = () => openAuth('up');
-    document.getElementById('bellWrap').style.display  = 'none';
-    if (unsubInbox) { unsubInbox(); unsubInbox = null; }
-    if (unsubChatListener) { unsubChatListener(); unsubChatListener = null; }
+    document.getElementById('btnSignIn').style.display  = '';
+    document.getElementById('btnJoin').style.display    = '';
+    document.getElementById('bellWrap').style.display   = 'none';
+    document.getElementById('notifWrap').style.display  = 'none';
+    document.getElementById('btnProfile').style.display = 'none';
+    if (unsubInbox)       { unsubInbox(); unsubInbox = null; }
+    if (unsubChatListener){ unsubChatListener(); unsubChatListener = null; }
+    if (unsubNotifs)      { unsubNotifs(); unsubNotifs = null; }
     renderFeed();
   }
 });
@@ -659,7 +771,7 @@ function showErr(msg) {
 }
 async function doLogout() {
   await signOut(auth);
-  closeSidebar(); closeInbox();
+  closeSidebar(); closeInbox(); closeNotifs();
   toast('Signed out.', '');
 }
 document.getElementById('fPass').addEventListener('keydown', e => { if(e.key==='Enter') doAuth(); });
@@ -690,6 +802,11 @@ function renderFeed() {
     feed.innerHTML = '';
     docs.forEach(d => feed.appendChild(makeCard(d.id, d.data)));
     recordViewsForFeed(snap);
+    // update comment counts on all visible buttons
+    docs.forEach(d => {
+      const el = document.getElementById('cmtcount_'+d.id);
+      if (el) el.textContent = d.data.commentCount || 0;
+    });
   }, err => {
     // Show the actual error so we can diagnose it
     feed.innerHTML = `<div class="empty">
@@ -729,7 +846,7 @@ function makeCard(id, t) {
       <button class="rbtn ${myRx==='lo'?'on-love':''}"    onclick="doReact('${id}','lo')">❤️ <span class="n">${lo}</span></button>
       <button class="rbtn ${myRx==='di'?'on-dislike':''}" onclick="doReact('${id}','di')">👎 <span class="n">${di}</span></button>
       <button class="donate-btn" onclick="openDonate('${id}')">💙 Donate</button>
-      <button class="msg-btn" style="border-color:rgba(78,201,176,0.25);color:var(--cyan);" onclick="openComments('${id}')">💬 Comments</button>
+      <button class="msg-btn" style="border-color:rgba(78,201,176,0.25);color:var(--cyan);" id="cmtbtn_${id}" onclick="openComments('${id}')">💬 <span id="cmtcount_${id}">${t.commentCount||0}</span></button>
       ${!mine && t.owner ? `<button class="msg-btn" id="msgbtn_${id}" onclick="openMsgModal('${id}','${t.owner}')">✉ Message</button>` : ''}
       ${mine ? `<span class="views-chip">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -783,8 +900,12 @@ window.doReact = async (id, type) => {
   const prev  = data[rxKey] || null;
   const upd   = {};
   if (prev) upd[prev] = increment(-1);
-  if (prev !== type) { upd[type] = increment(1); upd[rxKey] = type; }
-  else               { upd[rxKey] = ''; }
+  if (prev !== type) {
+    upd[type] = increment(1); upd[rxKey] = type;
+    // notify thought owner
+    const typeLabel = type==='li'?'like':type==='lo'?'love':'dislike';
+    sendNotif(data.owner, typeLabel, `Someone ${typeLabel}d your thought: "${(data.text||'').slice(0,60)}…"`);
+  } else { upd[rxKey] = ''; }
   await updateDoc(ref, upd);
 };
 
@@ -859,6 +980,72 @@ function closeSidebar() {
   document.getElementById('sbBg').classList.remove('show');
   document.getElementById('sidebar').classList.remove('show');
 }
+
+/* ══════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════ */
+const notifsCol = collection(db, 'notifications');
+let unsubNotifs = null;
+
+function startNotifListener() {
+  if (!user || unsubNotifs) return;
+  const q = query(notifsCol, where('to','==',user.uid), where('read','==',false));
+  unsubNotifs = onSnapshot(q, snap => {
+    const count = snap.size;
+    const badge = document.getElementById('notifBadge');
+    badge.textContent = count > 9 ? '9+' : count;
+    badge.className   = 'nav-badge'+(count>0?' show':'');
+  });
+}
+
+async function sendNotif(toUid, type, text) {
+  if (!toUid || !user || toUid === user.uid) return;
+  try {
+    await addDoc(notifsCol, {
+      to: toUid, from: user.uid,
+      type, text,
+      ts: serverTimestamp(), read: false
+    });
+  } catch(e) {}
+}
+
+window.openNotifs = async () => {
+  document.getElementById('notifSidebar').classList.add('show');
+  const list = document.getElementById('notifList');
+  list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+  const q = query(notifsCol, where('to','==',user.uid));
+  const snap = await getDocs(q);
+  const notifs = [];
+  snap.forEach(d => notifs.push({ id:d.id, ...d.data() }));
+  notifs.sort((a,b) => (b.ts?.seconds||0) - (a.ts?.seconds||0));
+
+  if (!notifs.length) {
+    list.innerHTML = '<p style="font-size:12px;color:var(--text3);text-align:center;padding:30px 0;">No notifications yet.</p>';
+    return;
+  }
+
+  const icons = { like:'👍', love:'❤️', dislike:'👎', comment:'💬', donate:'💙', reply:'↩' };
+  list.innerHTML = notifs.map(n => `
+    <div class="req-card ${n.read?'':'unread'}" style="cursor:default;">
+      <div class="req-card-head">
+        <span class="req-from">${icons[n.type]||'🔔'} ${n.type}</span>
+        <span class="req-time">${timeAgo(n.ts?.toDate?n.ts.toDate():new Date())}</span>
+      </div>
+      <div class="req-msg" style="color:var(--text);">${esc(n.text||'')}</div>
+    </div>`).join('');
+
+  // mark all as read
+  snap.forEach(d => {
+    if (!d.data().read) updateDoc(doc(db,'notifications',d.id), { read:true }).catch(()=>{});
+  });
+  document.getElementById('notifBadge').className = 'nav-badge';
+};
+
+function closeNotifs() {
+  document.getElementById('notifSidebar').classList.remove('show');
+}
+window.closeNotifs = closeNotifs;
 
 /* ══════════════════════════════
    MESSAGE REQUESTS
@@ -974,19 +1161,31 @@ window.openProfileModal = async (ownerId) => {
     });
   }
 
-  // Message button
+  // Message button — always shown
   const msgWrap = document.getElementById('pmMsgWrap');
   if (!user) {
-    msgWrap.innerHTML = `<button class="btn btn-blue" style="width:100%;padding:11px;" onclick="openAuth('in')">Sign in to send a message request</button>`;
-  } else if (ownerId !== user.uid) {
+    msgWrap.innerHTML = `<button class="btn btn-blue" style="width:100%;padding:11px;" onclick="openAuth('in')">✉ Sign in to message</button>`;
+  } else if (ownerId === user.uid) {
+    msgWrap.innerHTML = ''; // own profile — no message button
+  } else {
     const existing = await getDocs(query(requestsCol, where('from','==',user.uid), where('to','==',ownerId)));
     if (existing.empty) {
       msgWrap.innerHTML = `<button class="btn btn-blue" style="width:100%;padding:11px;" onclick="openMsgFromProfile('${ownerId}')">✉ Send message request</button>`;
     } else {
-      const req        = existing.docs[0].data();
-      const statusColor= req.status==='accepted'?'var(--green)':req.status==='declined'?'var(--red)':'var(--amber)';
-      const statusLabel= req.status==='accepted'?'✓ Request accepted — check your inbox':req.status==='declined'?'✗ Request declined':'⏳ Request pending';
-      msgWrap.innerHTML= `<div style="text-align:center;font-size:13px;color:${statusColor};padding:12px;background:var(--bg2);border-radius:var(--r);border:1px solid var(--bdr);">${statusLabel}</div>`;
+      const req   = existing.docs[0].data();
+      if (req.status === 'accepted') {
+        // find the chat and open it directly
+        const chatSnap = await getDocs(query(chatsCol, where('participants','array-contains',user.uid)));
+        let chatId = null;
+        chatSnap.forEach(d => { if(d.data().participants.includes(ownerId)) chatId = d.id; });
+        msgWrap.innerHTML = chatId
+          ? `<button class="btn btn-cyan" style="width:100%;padding:11px;" onclick="closeProfileModal();openChatById('${chatId}')">💬 Open chat</button>`
+          : `<div style="font-size:12px;color:var(--green);text-align:center;padding:10px;">✓ Request accepted — check inbox</div>`;
+      } else if (req.status === 'declined') {
+        msgWrap.innerHTML = `<div style="font-size:12px;color:var(--text3);text-align:center;padding:10px;background:var(--bg2);border-radius:var(--r);">Request was declined</div>`;
+      } else {
+        msgWrap.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:var(--bg2);border-radius:var(--r);font-size:13px;color:var(--amber);">⏳ Request pending — awaiting reply</div>`;
+      }
     }
   }
 };
@@ -1312,6 +1511,11 @@ document.getElementById('chatInput').addEventListener('keydown', e => { if(e.key
 /* ══════════════════════════════
    UTILS
 ══════════════════════════════ */
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // also re-render feed to feel like a refresh
+  if (typeof renderFeed === 'function') renderFeed();
+}
 function timeAgo(d) {
   if (!d) return ''; const diff=Date.now()-d.getTime();
   const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);
@@ -1445,6 +1649,9 @@ async function sendDonate() {
   // Simulate payment success (replace with real Stripe in production)
   setTimeout(() => {
     btn.disabled = false; btn.textContent = 'Send donation';
+    // notify thought owner
+    const tSnapD = await getDoc(doc(db,'thoughts',donateThoughtId));
+    if (tSnapD.exists()) sendNotif(tSnapD.data().owner, 'donate', `Someone donated $${parseFloat(amt).toFixed(2)} to your thought anonymously 💙`);
     closeDonate();
     toast('$'+parseFloat(amt).toFixed(2)+' donated anonymously 💙', 'ok');
   }, 1200);
@@ -1458,126 +1665,138 @@ window.pickAmt = (el, v) => {
 };
 
 /* ══════════════════════════════
-   PHASE 4 — COMMENTS
+   PHASE 4 — COMMENTS (Instagram bottom sheet)
 ══════════════════════════════ */
-const commentsCol = collection(db, 'comments');
+const commentsCol   = collection(db, 'comments');
 let activeThoughtId = null;
 let unsubComments   = null;
+let replyingTo      = null; // commentId being replied to
 
 window.openComments = async (thoughtId) => {
   activeThoughtId = thoughtId;
-  document.getElementById('commentList').innerHTML    = '<div class="loading-spinner"><div class="spinner"></div></div>';
-  document.getElementById('commentInput').value       = '';
-  document.getElementById('commentsPage').classList.add('show');
-  document.getElementById('commentsPage').scrollTop   = 0;
+  replyingTo      = null;
+  document.getElementById('commentList').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+  document.getElementById('commentInput').value    = '';
+  document.getElementById('commentInput').placeholder = 'Add a comment…';
 
-  // Show thought preview
-  const tSnap = await getDoc(doc(db,'thoughts',thoughtId));
-  const tData = tSnap.data() || {};
-  document.getElementById('commentThoughtPreview').innerHTML = `
-    <div style="background:var(--bg1);border:1px solid var(--bdr);border-radius:var(--r2);padding:14px 16px;">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">💬 Commenting on:</div>
-      <div style="font-size:14px;color:var(--text);line-height:1.7;">${esc(tData.text||'')}</div>
-    </div>`;
+  // Show sheet
+  document.getElementById('commentSheetBg').classList.add('show');
+  document.getElementById('commentSheet').classList.add('show');
+  setTimeout(() => document.getElementById('commentInput').focus(), 400);
 
-  // Real-time comments listener
+  // Real-time listener for top-level comments
   if (unsubComments) { unsubComments(); unsubComments = null; }
   const q = query(commentsCol, where('thoughtId','==',thoughtId), where('parentId','==',null));
   unsubComments = onSnapshot(q, async snap => {
     const comments = [];
     snap.forEach(d => comments.push({ id:d.id, ...d.data() }));
     comments.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
-    document.getElementById('commentCount').textContent = `Comments (${comments.length})`;
-    await renderComments(comments, thoughtId);
+    document.getElementById('commentCount').textContent = 'Comments (' + comments.length + ')';
+    await renderComments(comments);
   });
 };
 
-async function renderComments(comments, thoughtId) {
+async function renderComments(comments) {
   const list = document.getElementById('commentList');
-  list.innerHTML = '';
   if (!comments.length) {
-    list.innerHTML = '<p style="font-size:13px;color:var(--text3);text-align:center;padding:30px 0;">No comments yet. Be the first!</p>';
+    list.innerHTML = '<p style="font-size:13px;color:var(--text3);text-align:center;padding:30px 0;">No comments yet.<br>Be the first to comment!</p>';
     return;
   }
-
+  list.innerHTML = '';
   for (const c of comments) {
-    // Get replies
+    // fetch replies
     const rSnap = await getDocs(query(commentsCol, where('parentId','==',c.id)));
     const replies = [];
     rSnap.forEach(d => replies.push({ id:d.id, ...d.data() }));
     replies.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
 
-    const card = buildCommentCard(c, false);
-    list.appendChild(card);
+    // Build comment item
+    const item = document.createElement('div');
+    item.className = 'comment-item';
+    const myLike = user && (c.likedBy||[]).includes(user.uid);
+    item.innerHTML = `
+      <div class="comment-avatar">🌀</div>
+      <div class="comment-content">
+        <div class="comment-name">Anonymous</div>
+        <div class="comment-body">${esc(c.text||'')}</div>
+        <div class="comment-meta">
+          <span class="comment-time">${timeAgo(c.ts?.toDate?c.ts.toDate():new Date())}</span>
+          <button class="comment-like-btn ${myLike?'liked':''}" onclick="likeComment('${c.id}')">
+            ❤️ ${c.likes||0}
+          </button>
+          <button class="reply-btn" onclick="startReply('${c.id}','Anonymous')">Reply</button>
+        </div>
 
-    // Render replies
-    replies.forEach(r => list.appendChild(buildCommentCard(r, true)));
+        <!-- Replies -->
+        ${replies.length ? `<div class="replies-wrap">
+          ${replies.map(r => {
+            const rLiked = user && (r.likedBy||[]).includes(user.uid);
+            return `<div class="reply-item">
+              <div class="reply-avatar">🌀</div>
+              <div class="comment-content">
+                <div class="comment-name">Anonymous</div>
+                <div class="comment-body">${esc(r.text||'')}</div>
+                <div class="comment-meta">
+                  <span class="comment-time">${timeAgo(r.ts?.toDate?r.ts.toDate():new Date())}</span>
+                  <button class="comment-like-btn ${rLiked?'liked':''}" onclick="likeComment('${r.id}')">
+                    ❤️ ${r.likes||0}
+                  </button>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>` : ''}
 
-    // Reply input row
-    const replyWrap = document.createElement('div');
-    replyWrap.className = 'reply-input-wrap';
-    replyWrap.id = 'reply_'+c.id;
-    replyWrap.innerHTML = `
-      <input type="text" placeholder="Write a reply…" maxlength="200" id="replyInput_${c.id}"
-             onkeydown="if(event.key==='Enter') postReply('${c.id}')">
-      <button class="btn btn-cyan" style="padding:6px 12px;font-size:12px;" onclick="postReply('${c.id}')">Reply</button>
-      <button class="btn btn-ghost" style="padding:6px 10px;font-size:12px;" onclick="toggleReplyBox('${c.id}')">✕</button>`;
-    list.appendChild(replyWrap);
+        <!-- Reply input -->
+        <div class="reply-input-row" id="replyRow_${c.id}">
+          <input type="text" placeholder="Reply to Anonymous…" maxlength="200"
+                 id="replyIn_${c.id}"
+                 onkeydown="if(event.key==='Enter') submitReply('${c.id}')">
+          <button class="comment-post-btn" onclick="submitReply('${c.id}')">Post</button>
+          <button class="reply-btn" onclick="cancelReply('${c.id}')">✕</button>
+        </div>
+      </div>`;
+    list.appendChild(item);
   }
 }
 
-function buildCommentCard(c, isReply) {
-  const div   = document.createElement('div');
-  div.className = 'comment-card'+(isReply?' reply':'');
-  div.id = 'cc_'+c.id;
-  const myLike = user && (c.likedBy||[]).includes(user.uid);
-  const likes  = (c.likes||0);
+window.startReply = (commentId, name) => {
+  // Close any open reply box first
+  document.querySelectorAll('.reply-input-row.show').forEach(el => el.classList.remove('show'));
+  replyingTo = commentId;
+  const row = document.getElementById('replyRow_'+commentId);
+  if (row) {
+    row.classList.add('show');
+    setTimeout(() => document.getElementById('replyIn_'+commentId)?.focus(), 80);
+  }
+};
 
-  div.innerHTML = `
-    <div class="comment-head">
-      <span class="comment-anon">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-        anonymous
-      </span>
-      <span class="comment-time">${timeAgo(c.ts?.toDate?c.ts.toDate():new Date())}</span>
-    </div>
-    <div class="comment-body">${esc(c.text||'')}</div>
-    <div class="comment-actions">
-      <button class="comment-like-btn ${myLike?'liked':''}" onclick="likeComment('${c.id}')">
-        ❤️ <span>${likes}</span>
-      </button>
-      ${!isReply ? `<button class="reply-btn" onclick="toggleReplyBox('${c.id}')">↩ Reply</button>` : ''}
-    </div>`;
-  return div;
-}
-
-window.toggleReplyBox = (commentId) => {
-  const wrap = document.getElementById('reply_'+commentId);
-  if (!wrap) return;
-  const isOpen = wrap.classList.contains('show');
-  wrap.classList.toggle('show', !isOpen);
-  if (!isOpen) setTimeout(() => document.getElementById('replyInput_'+commentId)?.focus(), 80);
+window.cancelReply = (commentId) => {
+  document.getElementById('replyRow_'+commentId)?.classList.remove('show');
+  replyingTo = null;
 };
 
 window.postComment = async () => {
   if (!user) { openAuth('in'); return; }
-  const text = document.getElementById('commentInput').value.trim();
-  if (!text) { toast('Write a comment first.','err'); return; }
+  const input = document.getElementById('commentInput');
+  const text  = input.value.trim();
+  if (!text) return;
   await addDoc(commentsCol, {
     thoughtId: activeThoughtId, parentId: null,
     text, ts: serverTimestamp(), owner: user.uid,
     likes: 0, likedBy: []
   });
-  document.getElementById('commentInput').value = '';
-  toast('Comment posted!','ok');
+  await updateDoc(doc(db,'thoughts',activeThoughtId), { commentCount: increment(1) }).catch(()=>{});
+  // notify thought owner
+  const tSnap2 = await getDoc(doc(db,'thoughts',activeThoughtId));
+  if (tSnap2.exists()) sendNotif(tSnap2.data().owner, 'comment', `Someone commented on your thought: "${text.slice(0,60)}"`);
+  input.value = '';
+  toast('Comment posted!', 'ok');
 };
 
-window.postReply = async (parentId) => {
+window.submitReply = async (parentId) => {
   if (!user) { openAuth('in'); return; }
-  const input = document.getElementById('replyInput_'+parentId);
+  const input = document.getElementById('replyIn_'+parentId);
   const text  = input?.value.trim();
   if (!text) return;
   await addDoc(commentsCol, {
@@ -1585,35 +1804,36 @@ window.postReply = async (parentId) => {
     text, ts: serverTimestamp(), owner: user.uid,
     likes: 0, likedBy: []
   });
+  await updateDoc(doc(db,'thoughts',activeThoughtId), { commentCount: increment(1) }).catch(()=>{});
+  // notify the parent comment owner
+  const parentSnap = await getDoc(doc(db,'comments',parentId));
+  if (parentSnap.exists()) sendNotif(parentSnap.data().owner, 'reply', `Someone replied to your comment: "${text.slice(0,60)}"`);
   input.value = '';
-  document.getElementById('reply_'+parentId)?.classList.remove('show');
-  toast('Reply posted!','ok');
+  document.getElementById('replyRow_'+parentId)?.classList.remove('show');
+  replyingTo = null;
+  toast('Reply posted!', 'ok');
 };
 
 window.likeComment = async (commentId) => {
   if (!user) { openAuth('in'); return; }
-  const ref   = doc(db,'comments',commentId);
-  const snap  = await getDoc(ref);
+  const ref  = doc(db,'comments',commentId);
+  const snap = await getDoc(ref);
   if (!snap.exists()) return;
   const data  = snap.data();
   const liked = (data.likedBy||[]).includes(user.uid);
   if (liked) {
-    await updateDoc(ref, {
-      likes:   increment(-1),
-      likedBy: data.likedBy.filter(u=>u!==user.uid)
-    });
+    await updateDoc(ref, { likes: increment(-1), likedBy: data.likedBy.filter(u=>u!==user.uid) });
   } else {
-    await updateDoc(ref, {
-      likes:   increment(1),
-      likedBy: [...(data.likedBy||[]), user.uid]
-    });
+    await updateDoc(ref, { likes: increment(1),  likedBy: [...(data.likedBy||[]), user.uid] });
   }
 };
 
 function closeComments() {
-  document.getElementById('commentsPage').classList.remove('show');
+  document.getElementById('commentSheetBg').classList.remove('show');
+  document.getElementById('commentSheet').classList.remove('show');
   if (unsubComments) { unsubComments(); unsubComments = null; }
   activeThoughtId = null;
+  replyingTo      = null;
 }
 window.closeComments = closeComments;
 
@@ -1624,7 +1844,7 @@ document.getElementById('msgBg').addEventListener('click',    e=>{if(e.target.id
 document.getElementById('chatBg').addEventListener('click',   e=>{if(e.target.id==='chatBg')   closeChat();});
 document.getElementById('sbBg').addEventListener('click',     ()=>closeSidebar());
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();closeComments();}
+  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeNotifs();closeChat();closeMsgModal();closeComments();}
 });
 
 /* expose globals needed by inline onclick */
