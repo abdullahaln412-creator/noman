@@ -672,7 +672,7 @@ function renderFeed() {
   const feed = document.getElementById('feed');
   feed.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><br>Loading thoughts…</div>';
 
-  const q = query(thoughtsCol, orderBy('ts', 'desc'));
+  const q = query(thoughtsCol);
   unsubFeed = onSnapshot(q, snap => {
     if (snap.empty) {
       feed.innerHTML = `<div class="empty">
@@ -683,8 +683,12 @@ function renderFeed() {
       </div>`;
       return;
     }
+    // sort newest first manually — no index needed
+    const docs = [];
+    snap.forEach(d => docs.push({ id:d.id, data:d.data() }));
+    docs.sort((a,b) => (b.data.ts?.seconds||0) - (a.data.ts?.seconds||0));
     feed.innerHTML = '';
-    snap.forEach(d => feed.appendChild(makeCard(d.id, d.data())));
+    docs.forEach(d => feed.appendChild(makeCard(d.id, d.data)));
     recordViewsForFeed(snap);
   });
 }
@@ -811,10 +815,11 @@ async function openSidebar() {
   document.getElementById('sidebar').classList.add('show');
   document.getElementById('sbList').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
 
-  const q = query(thoughtsCol, where('owner','==',user.uid), orderBy('ts','desc'));
+  const q = query(thoughtsCol, where('owner','==',user.uid));
   const snap = await getDocs(q);
   const mine = [];
   snap.forEach(d => mine.push({ id:d.id, ...d.data() }));
+  mine.sort((a,b) => (b.ts?.seconds||0) - (a.ts?.seconds||0));
 
   const totalViews  = mine.reduce((s,t)=>s+(t.views||0),0);
   const totalReacts = mine.reduce((s,t)=>s+(t.li||0)+(t.lo||0)+(t.di||0),0);
