@@ -699,17 +699,7 @@ function startInboxListener() {
   // Watch chats for unread messages
   const qChat = query(chatsCol, where('participants','array-contains',user.uid));
   unsubChatListener = onSnapshot(qChat, snap => {
-    let unread = 0;
-    snap.forEach(d => {
-      const c    = d.data();
-      const msgs = c.messages || [];
-      // count messages not from me that are unread
-      msgs.forEach(m => {
-        if (m.from !== user.uid && !m.readBy?.includes(user.uid)) unread++;
-      });
-    });
-    document.getElementById('chatDot').className = 'dot'+(unread>0?' show':'');
-    updateBellBadge();
+    suppressOpenChatUnread(snap);
   });
 }
 
@@ -720,6 +710,20 @@ function updateBellBadge() {
   const hasAny  = reqDot || chatDot;
   badge.textContent = '●';
   badge.className   = 'bell-badge'+(hasAny?' show':'');
+}
+
+/* ── suppress chatDot when that chat is already open ── */
+function suppressOpenChatUnread(snap) {
+  let unread = 0;
+  snap.forEach(d => {
+    if (d.id === activeChatId) return; // skip currently open chat
+    const msgs = d.data().messages || [];
+    msgs.forEach(m => {
+      if (m.from !== user.uid && !m.readBy?.includes(user.uid)) unread++;
+    });
+  });
+  document.getElementById('chatDot').className = 'dot'+(unread>0?' show':'');
+  updateBellBadge();
 }
 
 window.openInbox = () => {
@@ -877,20 +881,51 @@ window.openChatById = async id => {
     if (changed) await updateDoc(chatRef, { messages: msgs });
   }
 
-  unsubChat = onSnapshot(chatRef, snap => {
+  let lastMsgCount = 0;
+
+  unsubChat = onSnapshot(chatRef, async snap => {
     if (!snap.exists()) return;
     const data = snap.data();
+    const msgs = data.messages || [];
+
+    // ── Auto-mark incoming messages as read since chat is open ──
+    let needsRead = false;
+    msgs.forEach(m => {
+      if (m.from !== user.uid) {
+        if (!m.readBy) m.readBy = [];
+        if (!m.readBy.includes(user.uid)) { m.readBy.push(user.uid); needsRead = true; }
+      }
+    });
+    if (needsRead) {
+      await updateDoc(chatRef, { messages: msgs });
+    }
+
+    // ── Play sound if new incoming message arrived ──
+    if (msgs.length > lastMsgCount) {
+      const newMsgs = msgs.slice(lastMsgCount);
+      const hasIncoming = newMsgs.some(m => m.from !== user.uid);
+      if (hasIncoming && lastMsgCount > 0) playMsgSound();
+    }
+    lastMsgCount = msgs.length;
+
+    // ── Render thread ──
     const thread = document.getElementById('chatThread');
     thread.innerHTML = '';
-    const msgs = data.messages || [];
     if (!msgs.length) {
       thread.innerHTML = `<p style="font-size:12px;color:var(--text3);text-align:center;padding:20px 0;">Say hello — nobody knows who you are.</p>`;
     } else {
-      msgs.forEach(m => {
-        const mine = m.from === user.uid;
-        const wrap = document.createElement('div');
-        wrap.innerHTML = `<div class="chat-msg ${mine?'mine':'theirs'}">${esc(m.text)}</div>
-                          <div class="chat-meta ${mine?'':'theirs'}">${timeAgo(m.ts?.toDate?m.ts.toDate():new Date())}</div>`;
+      msgs.forEach((m, i) => {
+        const mine    = m.from === user.uid;
+        const isRead  = mine && m.readBy && m.readBy.some(uid => uid !== user.uid);
+        // show "Read" only on the last message I sent
+        const isLast  = mine && i === msgs.length - 1;
+        const wrap    = document.createElement('div');
+        wrap.innerHTML = `
+          <div class="chat-msg ${mine?'mine':'theirs'}">${esc(m.text)}</div>
+          <div class="chat-meta ${mine?'':'theirs'}">
+            ${timeAgo(m.ts?.toDate?m.ts.toDate():new Date())}
+            ${mine && isLast ? `<span style="margin-left:6px;color:${isRead?'var(--cyan)':'var(--text3)'};">${isRead?'✓✓ Read':'✓ Sent'}</span>` : ''}
+          </div>`;
         thread.appendChild(wrap);
       });
       thread.scrollTop = thread.scrollHeight;
@@ -917,6 +952,32 @@ function closeChat() {
   document.getElementById('chatBg').classList.remove('show');
   if (unsubChat) { unsubChat(); unsubChat = null; }
   activeChatId = null;
+}
+
+/* ── NOTIFICATION SOUND (Web Audio API — no file needed) ── */
+function playMsgSound() {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.type      = 'sine';
+    osc2.type      = 'sine';
+    osc1.frequency.setValueAtTime(880, ctx.currentTime);
+    osc2.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+    osc1.start(ctx.currentTime);
+    osc1.stop(ctx.currentTime + 0.1);
+    osc2.start(ctx.currentTime + 0.1);
+    osc2.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
 }
 document.getElementById('chatInput').addEventListener('keydown', e => { if(e.key==='Enter') sendChatMsg(); });
 
