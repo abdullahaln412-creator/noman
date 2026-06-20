@@ -1306,17 +1306,8 @@ function playMsgSound() {
 }
 document.getElementById('chatInput').addEventListener('keydown', e => { if(e.key==='Enter') sendChatMsg(); });
 
-/* ══════════════════════════════
-   DONATE
-══════════════════════════════ */
-window.openDonate  = id => { donateId=id; pickedAmt=null; document.querySelectorAll('.amt').forEach(b=>b.classList.remove('picked')); document.getElementById('customAmt').value=''; document.getElementById('donateBg').classList.add('show'); };
-function closeDonate() { document.getElementById('donateBg').classList.remove('show'); donateId=null; }
-window.pickAmt = (el,v) => { document.querySelectorAll('.amt').forEach(b=>b.classList.remove('picked')); el.classList.add('picked'); pickedAmt=v; document.getElementById('customAmt').value=''; };
-function sendDonate() {
-  const custom=document.getElementById('customAmt').value, amt=custom||pickedAmt;
-  if(!amt||parseFloat(amt)<=0){toast('Pick or enter an amount.','err');return;}
-  closeDonate(); toast('$'+parseFloat(amt).toFixed(2)+' sent anonymously 💙','ok');
-}
+/* donate handled by Phase 4 below */
+
 
 /* ══════════════════════════════
    UTILS
@@ -1330,16 +1321,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 let toastTimer;
 function toast(msg,type){ const el=document.getElementById('toast'); el.textContent=msg; el.className='toast show '+(type||''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3000); }
 
-/* BACKDROP CLOSE */
-document.getElementById('authBg').addEventListener('click',   e=>{if(e.target.id==='authBg')   closeAuth();});
-document.getElementById('donateBg').addEventListener('click', e=>{if(e.target.id==='donateBg') closeDonate();});
-document.getElementById('msgBg').addEventListener('click',    e=>{if(e.target.id==='msgBg')    closeMsgModal();});
-document.getElementById('chatBg').addEventListener('click',   e=>{if(e.target.id==='chatBg')   closeChat();});
-// profile page uses back button — no backdrop listener needed
-document.getElementById('sbBg').addEventListener('click',     ()=>closeSidebar());
-document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();}
-});
+/* backdrop listeners moved to end */
 
 /* ══════════════════════════════
    PHASE 4 — DONATE (Stripe UI + Crypto)
@@ -1634,6 +1616,16 @@ function closeComments() {
   activeThoughtId = null;
 }
 window.closeComments = closeComments;
+
+/* ── BACKDROP CLOSE & KEYBOARD ── */
+document.getElementById('authBg').addEventListener('click',   e=>{if(e.target.id==='authBg')   closeAuth();});
+document.getElementById('donateBg').addEventListener('click', e=>{if(e.target.id==='donateBg') closeDonate();});
+document.getElementById('msgBg').addEventListener('click',    e=>{if(e.target.id==='msgBg')    closeMsgModal();});
+document.getElementById('chatBg').addEventListener('click',   e=>{if(e.target.id==='chatBg')   closeChat();});
+document.getElementById('sbBg').addEventListener('click',     ()=>closeSidebar());
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();closeComments();}
+});
 
 /* expose globals needed by inline onclick */
 window.closeAuth=closeAuth; window.closeMsgModal=closeMsgModal; window.closeDonate=closeDonate; window.closeComments=closeComments;
