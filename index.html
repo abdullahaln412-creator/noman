@@ -690,6 +690,14 @@ function renderFeed() {
     feed.innerHTML = '';
     docs.forEach(d => feed.appendChild(makeCard(d.id, d.data)));
     recordViewsForFeed(snap);
+  }, err => {
+    // Show the actual error so we can diagnose it
+    feed.innerHTML = `<div class="empty">
+      <p style="color:var(--red);">❌ Could not load thoughts.</p>
+      <p style="font-size:11px;color:var(--text3);margin-top:8px;">${err.code}: ${err.message}</p>
+      <p style="font-size:11px;color:var(--text3);margin-top:4px;">Check Firestore rules and Firebase console.</p>
+    </div>`;
+    console.error('Feed error:', err);
   });
 }
 
