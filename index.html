@@ -808,13 +808,12 @@ function renderFeed() {
       if (el) el.textContent = d.data.commentCount || 0;
     });
   }, err => {
-    // Show the actual error so we can diagnose it
     feed.innerHTML = `<div class="empty">
-      <p style="color:var(--red);">❌ Could not load thoughts.</p>
-      <p style="font-size:11px;color:var(--text3);margin-top:8px;">${err.code}: ${err.message}</p>
-      <p style="font-size:11px;color:var(--text3);margin-top:4px;">Check Firestore rules and Firebase console.</p>
+      <p style="color:var(--red);font-size:14px;font-weight:600;">❌ Firebase Error</p>
+      <p style="font-size:13px;color:var(--amber);margin-top:8px;word-break:break-all;">${err.code}</p>
+      <p style="font-size:12px;color:var(--text3);margin-top:6px;">${err.message}</p>
     </div>`;
-    console.error('Feed error:', err);
+    console.error('Feed error:', err.code, err.message);
   });
 }
 
