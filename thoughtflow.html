@@ -469,6 +469,7 @@ function renderFeed() {
     }
     feed.innerHTML = '';
     snap.forEach(d => feed.appendChild(makeCard(d.id, d.data())));
+    recordViewsForFeed(snap);
   });
 }
 
@@ -509,32 +510,29 @@ function makeCard(id, t) {
     ${mine ? `<div class="owner-bar"><span class="label">◆ your thought</span><span>👍 ${li}</span><span>❤️ ${lo}</span><span>👎 ${di}</span><span style="margin-left:auto;">👁 ${views}</span></div>` : ''}
   `;
 
-  // Record view + check message button async
-  if (!mine && t.owner) {
-    recordView(id);
-    checkMsgBtn(id, t.owner);
-  }
+  // check msg button after card is in DOM
+  if (!mine && t.owner) setTimeout(() => checkMsgBtn(id, t.owner), 0);
+
   return div;
 }
 
 /* ══════════════════════════════
-   VIEWS
+   VIEWS — count after feed renders
 ══════════════════════════════ */
 const viewedSession = new Set();
-function recordView(id) {
-  if (!id || viewedSession.has(id)) return;
-  viewedSession.add(id);
-  // Use IntersectionObserver
-  const card = document.getElementById('c_' + id);
-  if (!card) return;
-  const obs = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      obs.disconnect();
-      updateDoc(doc(db,'thoughts',id), { views: increment(1) }).catch(()=>{});
+
+function recordViewsForFeed(snap) {
+  if (!snap) return;
+  snap.forEach(d => {
+    const t    = d.data();
+    const mine = user && t.owner === user.uid;
+    if (!mine && t.owner && !viewedSession.has(d.id)) {
+      viewedSession.add(d.id);
+      updateDoc(doc(db,'thoughts',d.id), { views: increment(1) }).catch(()=>{});
     }
-  }, { threshold: 0.5 });
-  obs.observe(card);
+  });
 }
+
 
 /* ══════════════════════════════
    REACTIONS
