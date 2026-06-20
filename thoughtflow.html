@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -176,6 +177,31 @@ textarea::placeholder { color:var(--text3); }
 .amt:hover { border-color:var(--bdr2); color:var(--text); }
 .amt.picked { border-color:var(--cyan); color:var(--cyan); background:var(--cyan-dim); }
 
+/* PROFILE MODAL */
+.profile-modal { max-width:440px; }
+.profile-modal-head {
+  display:flex; align-items:center; gap:14px; margin-bottom:20px;
+  padding-bottom:16px; border-bottom:1px solid var(--bdr);
+}
+.profile-modal-avatar {
+  width:48px; height:48px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--cyan-bdr);
+  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
+}
+.profile-modal-info { flex:1; }
+.profile-modal-name { font-size:14px; font-weight:600; color:var(--text); }
+.profile-modal-sub  { font-size:11px; color:var(--text3); margin-top:2px; }
+.profile-modal-stats {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:8px; margin-bottom:16px;
+}
+.profile-modal-thoughts { max-height:240px; overflow-y:auto; }
+.profile-thought-item {
+  background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:var(--r); padding:10px 12px; margin-bottom:8px;
+  font-size:13px; color:var(--text); line-height:1.55;
+}
+
 /* TOAST */
 .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px); background:var(--bg2); border:1px solid var(--bdr2); border-radius:20px; padding:8px 20px; font-size:13px; color:var(--text); z-index:999; white-space:nowrap; transition:transform 0.25s ease,opacity 0.25s ease; opacity:0; pointer-events:none; }
 .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
@@ -316,6 +342,28 @@ textarea::placeholder { color:var(--text3); }
       <input type="text" id="chatInput" placeholder="Type a message…" maxlength="500">
       <button class="btn btn-cyan" onclick="sendChatMsg()" style="padding:8px 14px;">Send</button>
     </div>
+  </div>
+</div>
+
+<!-- ANONYMOUS PROFILE MODAL -->
+<div class="modal-bg" id="profileModalBg">
+  <div class="modal profile-modal">
+    <div class="profile-modal-head">
+      <div class="profile-modal-avatar">🌀</div>
+      <div class="profile-modal-info">
+        <div class="profile-modal-name">Anonymous member</div>
+        <div class="profile-modal-sub" id="pmSub">Loading thoughts…</div>
+      </div>
+      <button class="btn btn-ghost" style="padding:5px 10px;flex-shrink:0;" onclick="closeProfileModal()">✕</button>
+    </div>
+    <div class="profile-modal-stats">
+      <div class="sb-stat"><div class="n" id="pmThoughts">—</div><div class="l">Thoughts</div></div>
+      <div class="sb-stat"><div class="n" id="pmReacts">—</div><div class="l">Reactions</div></div>
+      <div class="sb-stat"><div class="n" id="pmViews">—</div><div class="l">Views</div></div>
+    </div>
+    <div class="sb-section-title" style="margin-bottom:10px;">Their thoughts</div>
+    <div class="profile-modal-thoughts" id="pmThoughtList"></div>
+    <div style="margin-top:16px;" id="pmMsgWrap"></div>
   </div>
 </div>
 
@@ -486,13 +534,13 @@ function makeCard(id, t) {
 
   div.innerHTML = `
     <div class="card-head">
-      <span class="card-tag">
+      <span class="card-tag" ${!mine && t.owner ? `style="cursor:pointer;color:var(--cyan);opacity:0.8;" onclick="openProfileModal('${t.owner}')" title="View profile"` : ''}>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           <circle cx="12" cy="7" r="4"/>
           <line x1="16" y1="3" x2="20" y2="7"/><line x1="20" y1="3" x2="16" y2="7"/>
         </svg>
-        anonymous
+        ${!mine && t.owner ? 'anonymous ↗' : 'anonymous'}
       </span>
       <span class="card-time">${ago}</span>
     </div>
@@ -642,12 +690,24 @@ async function checkMsgBtn(thoughtId, ownerId) {
   const snap = await getDocs(q);
   if (!snap.empty) {
     const btn = document.getElementById('msgbtn_'+thoughtId);
-    if (btn) { btn.disabled = true; btn.title = 'Request already sent'; }
+    if (btn) {
+      btn.style.borderColor = 'rgba(206,145,120,0.4)';
+      btn.style.color       = 'var(--amber)';
+      // Replace onclick to show popup instead
+      btn.onclick = () => showAlreadySentPopup();
+    }
   }
 }
 
-window.openMsgModal = (thoughtId, ownerId) => {
+function showAlreadySentPopup() {
+  toast('You already sent a message request to this person.', 'err');
+}
+
+window.openMsgModal = async (thoughtId, ownerId) => {
   if (!user) { openAuth('in'); return; }
+  // Check if already sent
+  const existing = await getDocs(query(requestsCol, where('from','==',user.uid), where('to','==',ownerId)));
+  if (!existing.empty) { showAlreadySentPopup(); return; }
   msgTargetId = ownerId;
   document.getElementById('msgText').value = '';
   document.getElementById('msgErr').style.display = 'none';
@@ -679,6 +739,82 @@ async function sendMsgRequest() {
   toast('Message request sent!','ok');
 }
 window.sendMsgRequest = sendMsgRequest;
+
+/* ══════════════════════════════
+   ANONYMOUS PROFILE MODAL
+══════════════════════════════ */
+window.openProfileModal = async (ownerId) => {
+  if (!ownerId) return;
+
+  // Reset
+  document.getElementById('pmSub').textContent       = 'Loading…';
+  document.getElementById('pmThoughts').textContent  = '—';
+  document.getElementById('pmReacts').textContent    = '—';
+  document.getElementById('pmViews').textContent     = '—';
+  document.getElementById('pmThoughtList').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+  document.getElementById('pmMsgWrap').innerHTML     = '';
+  document.getElementById('profileModalBg').classList.add('show');
+
+  // Load their thoughts
+  const snap = await getDocs(query(thoughtsCol, where('owner','==',ownerId), orderBy('ts','desc')));
+  const thoughts = [];
+  snap.forEach(d => thoughts.push({ id:d.id, ...d.data() }));
+
+  const totalReacts = thoughts.reduce((s,t) => s+(t.li||0)+(t.lo||0)+(t.di||0), 0);
+  const totalViews  = thoughts.reduce((s,t) => s+(t.views||0), 0);
+
+  document.getElementById('pmSub').textContent      = thoughts.length + ' thoughts shared';
+  document.getElementById('pmThoughts').textContent = thoughts.length;
+  document.getElementById('pmReacts').textContent   = totalReacts;
+  document.getElementById('pmViews').textContent    = totalViews;
+
+  // Render their thoughts
+  const list = document.getElementById('pmThoughtList');
+  list.innerHTML = '';
+  if (!thoughts.length) {
+    list.innerHTML = '<p style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;">No thoughts yet.</p>';
+  } else {
+    thoughts.forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'profile-thought-item';
+      el.innerHTML = `
+        <div>${esc((t.text||'').length>120 ? t.text.slice(0,120)+'…' : (t.text||''))}</div>
+        <div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);">
+          <span>👍 ${t.li||0}</span><span>❤️ ${t.lo||0}</span><span>👎 ${t.di||0}</span>
+          <span style="margin-left:auto;">${timeAgo(t.ts?.toDate?t.ts.toDate():new Date())}</span>
+        </div>`;
+      list.appendChild(el);
+    });
+  }
+
+  // Show message button if not own profile
+  const msgWrap = document.getElementById('pmMsgWrap');
+  if (user && ownerId !== user.uid) {
+    const existing = await getDocs(query(requestsCol, where('from','==',user.uid), where('to','==',ownerId)));
+    if (existing.empty) {
+      msgWrap.innerHTML = `<button class="btn btn-blue" style="width:100%;padding:10px;" onclick="openMsgFromProfile('${ownerId}')">✉ Send message request</button>`;
+    } else {
+      const req = existing.docs[0].data();
+      const statusColor = req.status==='accepted'?'var(--green)':req.status==='declined'?'var(--red)':'var(--text3)';
+      const statusLabel = req.status==='accepted'?'✓ Request accepted':req.status==='declined'?'✗ Request declined':'⏳ Request pending';
+      msgWrap.innerHTML = `<div style="text-align:center;font-size:12px;color:${statusColor};padding:8px;">${statusLabel}</div>`;
+    }
+  }
+};
+
+window.openMsgFromProfile = (ownerId) => {
+  closeProfileModal();
+  msgTargetId = ownerId;
+  document.getElementById('msgText').value = '';
+  document.getElementById('msgErr').style.display = 'none';
+  document.getElementById('msgBg').classList.add('show');
+  setTimeout(()=>document.getElementById('msgText').focus(),80);
+};
+
+function closeProfileModal() {
+  document.getElementById('profileModalBg').classList.remove('show');
+}
+window.closeProfileModal = closeProfileModal;
 
 /* ══════════════════════════════
    INBOX — REAL-TIME LISTENER
@@ -1010,9 +1146,10 @@ document.getElementById('authBg').addEventListener('click',   e=>{if(e.target.id
 document.getElementById('donateBg').addEventListener('click', e=>{if(e.target.id==='donateBg') closeDonate();});
 document.getElementById('msgBg').addEventListener('click',    e=>{if(e.target.id==='msgBg')    closeMsgModal();});
 document.getElementById('chatBg').addEventListener('click',   e=>{if(e.target.id==='chatBg')   closeChat();});
+document.getElementById('profileModalBg').addEventListener('click', e=>{if(e.target.id==='profileModalBg') closeProfileModal();});
 document.getElementById('sbBg').addEventListener('click',     ()=>closeSidebar());
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();}
+  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();closeProfileModal();}
 });
 
 /* expose globals needed by inline onclick */
