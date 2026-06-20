@@ -1645,7 +1645,7 @@ async function sendDonate() {
   } catch(e) { console.error(e); }
 
   // Simulate payment success (replace with real Stripe in production)
-  setTimeout(() => {
+  setTimeout(async () => {
     btn.disabled = false; btn.textContent = 'Send donation';
     // notify thought owner
     const tSnapD = await getDoc(doc(db,'thoughts',donateThoughtId));
