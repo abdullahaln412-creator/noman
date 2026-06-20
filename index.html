@@ -227,6 +227,62 @@ textarea::placeholder { color:var(--text3); }
   padding-top:10px; border-top:1px solid var(--bdr);
 }
 
+/* COMMENTS */
+.comment-card {
+  background:var(--bg1); border:1px solid var(--bdr);
+  border-radius:var(--r2); padding:14px 16px; margin-bottom:10px;
+}
+.comment-card.reply {
+  margin-left:24px; border-left:2px solid var(--cyan-bdr);
+  background:var(--bg2);
+}
+.comment-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:8px;
+}
+.comment-anon { font-size:11px; color:var(--text3); display:flex; align-items:center; gap:5px; }
+.comment-time { font-size:11px; color:var(--text3); }
+.comment-body { font-size:13px; color:var(--text); line-height:1.6; margin-bottom:10px; }
+.comment-actions { display:flex; align-items:center; gap:8px; }
+.comment-like-btn {
+  display:flex; align-items:center; gap:4px;
+  background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:20px; padding:3px 10px;
+  font-size:12px; color:var(--text2); cursor:pointer;
+  transition:all 0.15s; font-family:inherit;
+}
+.comment-like-btn:hover { border-color:var(--bdr2); color:var(--red); }
+.comment-like-btn.liked { border-color:rgba(244,71,71,0.4); background:rgba(244,71,71,0.08); color:var(--red); }
+.reply-btn {
+  font-size:12px; color:var(--text3); cursor:pointer;
+  background:none; border:none; font-family:inherit;
+  padding:3px 8px; border-radius:var(--r);
+  transition:color 0.15s;
+}
+.reply-btn:hover { color:var(--cyan); }
+.reply-input-wrap {
+  margin-top:10px; display:none;
+  gap:8px; align-items:center;
+}
+.reply-input-wrap.show { display:flex; }
+.reply-input-wrap input {
+  flex:1; background:var(--bg3); border:1px solid var(--bdr);
+  border-radius:var(--r); color:var(--text); font-family:inherit;
+  font-size:12px; padding:7px 10px; outline:none;
+  transition:border-color 0.15s;
+}
+.reply-input-wrap input:focus { border-color:var(--cyan-bdr); }
+
+/* donate notification in profile */
+.donate-notif {
+  background:var(--bg2); border:1px solid var(--cyan-bdr);
+  border-radius:var(--r); padding:10px 14px; margin-bottom:8px;
+  display:flex; align-items:flex-start; gap:10px;
+}
+.donate-notif-icon { font-size:18px; flex-shrink:0; }
+.donate-notif-text { font-size:12px; color:var(--text2); line-height:1.55; }
+.donate-notif-amt  { font-size:14px; font-weight:600; color:var(--cyan); }
+
 /* TOAST */
 .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px); background:var(--bg2); border:1px solid var(--bdr2); border-radius:20px; padding:8px 20px; font-size:13px; color:var(--text); z-index:999; white-space:nowrap; transition:transform 0.25s ease,opacity 0.25s ease; opacity:0; pointer-events:none; }
 .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
@@ -305,24 +361,98 @@ textarea::placeholder { color:var(--text3); }
   </div>
 </div>
 
-<!-- DONATE MODAL -->
+<!-- DONATE MODAL (Phase 4) -->
 <div class="modal-bg" id="donateBg">
-  <div class="modal">
-    <h2>Support this thought</h2>
-    <p class="sub">The author stays anonymous — they only see the amount.</p>
-    <div class="amt-grid">
-      <button class="amt" onclick="pickAmt(this,'1')">$1</button>
-      <button class="amt" onclick="pickAmt(this,'2')">$2</button>
-      <button class="amt" onclick="pickAmt(this,'5')">$5</button>
-      <button class="amt" onclick="pickAmt(this,'10')">$10</button>
-      <button class="amt" onclick="pickAmt(this,'20')">$20</button>
-      <button class="amt" onclick="pickAmt(this,'50')">$50</button>
+  <div class="modal" style="max-width:460px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <h2>💙 Support this thought</h2>
+      <button class="btn btn-ghost" style="padding:5px 10px;" onclick="closeDonate()">✕</button>
     </div>
-    <div class="field"><label>Custom amount ($)</label><input type="number" id="customAmt" placeholder="0.00" min="0.5" step="0.5"></div>
+    <p class="sub">The author is anonymous — they only see the amount and your message.</p>
+
+    <!-- Payment method tabs -->
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab on" id="dtabCard"   onclick="setDonateTab('card')">💳 Card</button>
+      <button class="tab"    id="dtabCrypto" onclick="setDonateTab('crypto')">₿ Crypto</button>
+    </div>
+
+    <!-- CARD TAB -->
+    <div id="donateCardTab">
+      <div class="amt-grid">
+        <button class="amt" onclick="pickAmt(this,'1')">$1</button>
+        <button class="amt" onclick="pickAmt(this,'2')">$2</button>
+        <button class="amt" onclick="pickAmt(this,'5')">$5</button>
+        <button class="amt" onclick="pickAmt(this,'10')">$10</button>
+        <button class="amt" onclick="pickAmt(this,'20')">$20</button>
+        <button class="amt" onclick="pickAmt(this,'50')">$50</button>
+      </div>
+      <div class="field">
+        <label>Or enter custom amount ($)</label>
+        <input type="number" id="customAmt" placeholder="0.00" min="0.5" step="0.5">
+      </div>
+      <div class="field">
+        <label>Card number</label>
+        <input type="text" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="fmtCard(this)">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="field">
+          <label>Expiry</label>
+          <input type="text" id="cardExp" placeholder="MM/YY" maxlength="5" oninput="fmtExp(this)">
+        </div>
+        <div class="field">
+          <label>CVV</label>
+          <input type="text" id="cardCvv" placeholder="123" maxlength="4">
+        </div>
+      </div>
+    </div>
+
+    <!-- CRYPTO TAB -->
+    <div id="donateCryptoTab" style="display:none;">
+      <div class="tabs" style="margin-bottom:14px;">
+        <button class="tab on" id="cBtc" onclick="setCrypto('btc')">₿ Bitcoin</button>
+        <button class="tab"    id="cEth" onclick="setCrypto('eth')">Ξ Ethereum</button>
+        <button class="tab"    id="cUsdt" onclick="setCrypto('usdt')">₮ USDT</button>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;" id="cryptoLabel">Send Bitcoin to:</div>
+        <div style="font-size:12px;color:var(--cyan);word-break:break-all;font-family:monospace;margin-bottom:10px;" id="cryptoAddr">—</div>
+        <button class="btn btn-ghost" style="font-size:12px;padding:5px 14px;" onclick="copyAddr()">📋 Copy address</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;line-height:1.6;">
+        Send any amount to the address above.<br>The author will receive it anonymously.
+      </div>
+    </div>
+
+    <!-- Anonymous message to author (both tabs) -->
+    <div class="field" style="margin-top:14px;">
+      <label>Anonymous message to author <span style="color:var(--text3);font-weight:400;">(max 120 words)</span></label>
+      <textarea id="donateMsg" placeholder="Say something kind — they won't know who you are." style="min-height:70px;" oninput="countWords(this)"></textarea>
+      <div style="font-size:11px;color:var(--text3);text-align:right;margin-top:4px;" id="wordCount">0 / 120 words</div>
+    </div>
+
     <div class="modal-row">
       <button class="btn btn-outline" onclick="closeDonate()">Cancel</button>
-      <button class="btn btn-cyan" onclick="sendDonate()">Send</button>
+      <button class="btn btn-cyan"    id="donateSendBtn" onclick="sendDonate()">Send donation</button>
     </div>
+    <p class="privacy-note">Your identity is never revealed to the author.</p>
+  </div>
+</div>
+
+<!-- COMMENTS PAGE -->
+<div class="profile-page" id="commentsPage" style="z-index:145;">
+  <div class="profile-page-nav">
+    <button class="back-btn" onclick="closeComments()">← Back to feed</button>
+    <span style="font-size:13px;color:var(--text2);">Comments</span>
+  </div>
+  <div class="profile-page-body" id="commentsBody" style="max-width:640px;">
+    <div id="commentThoughtPreview" style="margin-bottom:20px;"></div>
+    <div class="field">
+      <label>Add a comment</label>
+      <textarea id="commentInput" placeholder="Share your thoughts on this…" style="min-height:70px;" maxlength="300"></textarea>
+    </div>
+    <button class="btn btn-cyan" style="width:100%;padding:10px;margin-bottom:24px;" onclick="postComment()">Post comment</button>
+    <div class="sb-section-title" style="margin-bottom:12px;" id="commentCount">Comments</div>
+    <div id="commentList"></div>
   </div>
 </div>
 
@@ -345,8 +475,10 @@ textarea::placeholder { color:var(--text3); }
 
 <!-- INBOX SIDEBAR -->
 <div class="inbox-sidebar" id="inboxSidebar">
-  <button class="sb-close" style="left:16px;right:auto;" onclick="closeInbox()">✕</button>
-  <div style="font-size:15px;font-weight:600;margin-bottom:16px;margin-top:4px;">Inbox</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div style="font-size:15px;font-weight:600;">Inbox</div>
+    <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="closeInbox()">✕</button>
+  </div>
   <div class="inbox-tabs">
     <button class="inbox-tab on" id="itabReq"   onclick="switchInboxTab('requests')">Requests <span class="dot" id="reqDot"></span></button>
     <button class="inbox-tab"    id="itabChats" onclick="switchInboxTab('chats')">Chats <span class="dot" id="chatDot"></span></button>
@@ -585,6 +717,7 @@ function makeCard(id, t) {
       <button class="rbtn ${myRx==='lo'?'on-love':''}"    onclick="doReact('${id}','lo')">❤️ <span class="n">${lo}</span></button>
       <button class="rbtn ${myRx==='di'?'on-dislike':''}" onclick="doReact('${id}','di')">👎 <span class="n">${di}</span></button>
       <button class="donate-btn" onclick="openDonate('${id}')">💙 Donate</button>
+      <button class="msg-btn" style="border-color:rgba(78,201,176,0.25);color:var(--cyan);" onclick="openComments('${id}')">💬 Comments</button>
       ${!mine && t.owner ? `<button class="msg-btn" id="msgbtn_${id}" onclick="openMsgModal('${id}','${t.owner}')">✉ Message</button>` : ''}
       ${mine ? `<span class="views-chip">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -1195,8 +1328,302 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();}
 });
 
+/* ══════════════════════════════
+   PHASE 4 — DONATE (Stripe UI + Crypto)
+══════════════════════════════ */
+const CRYPTO_ADDRS = {
+  btc:  'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+  eth:  '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+  usdt: 'TN3W4po3pZ4sFPghmNtHxJwXCFJMoKAdSm'
+};
+const CRYPTO_LABELS = { btc:'Send Bitcoin to:', eth:'Send Ethereum to:', usdt:'Send USDT (TRC-20) to:' };
+
+let donateTab   = 'card';
+let cryptoType  = 'btc';
+let donateThoughtId = null;
+
+window.setDonateTab = (tab) => {
+  donateTab = tab;
+  document.getElementById('dtabCard').className   = 'tab'+(tab==='card'?'  on':'');
+  document.getElementById('dtabCrypto').className = 'tab'+(tab==='crypto'?' on':'');
+  document.getElementById('donateCardTab').style.display   = tab==='card'?'':'none';
+  document.getElementById('donateCryptoTab').style.display = tab==='crypto'?'':'none';
+  document.getElementById('donateSendBtn').style.display   = tab==='card'?'':'none';
+};
+
+window.setCrypto = (type) => {
+  cryptoType = type;
+  ['btc','eth','usdt'].forEach(t => document.getElementById('c'+t.charAt(0).toUpperCase()+t.slice(1)).className = 'tab'+(t===type?' on':''));
+  document.getElementById('cryptoLabel').textContent = CRYPTO_LABELS[type];
+  document.getElementById('cryptoAddr').textContent  = CRYPTO_ADDRS[type];
+};
+
+window.copyAddr = () => {
+  navigator.clipboard.writeText(CRYPTO_ADDRS[cryptoType]);
+  toast('Address copied!', 'ok');
+};
+
+window.fmtCard = (el) => {
+  let v = el.value.replace(/\D/g,'').slice(0,16);
+  el.value = v.replace(/(.{4})/g,'$1 ').trim();
+};
+window.fmtExp = (el) => {
+  let v = el.value.replace(/\D/g,'');
+  if (v.length>=2) v = v.slice(0,2)+'/'+v.slice(2,4);
+  el.value = v;
+};
+window.countWords = (el) => {
+  const words = el.value.trim() === '' ? 0 : el.value.trim().split(/\s+/).length;
+  const el2   = document.getElementById('wordCount');
+  el2.textContent = words + ' / 120 words';
+  el2.style.color = words > 120 ? 'var(--red)' : 'var(--text3)';
+  if (words > 120) {
+    // trim to 120 words
+    const trimmed = el.value.trim().split(/\s+/).slice(0,120).join(' ');
+    el.value = trimmed;
+    el2.textContent = '120 / 120 words';
+  }
+};
+
+window.openDonate = (id) => {
+  donateThoughtId = id;
+  pickedAmt = null;
+  donateTab = 'card';
+  cryptoType = 'btc';
+  document.querySelectorAll('.amt').forEach(b=>b.classList.remove('picked'));
+  document.getElementById('customAmt').value  = '';
+  document.getElementById('donateMsg').value  = '';
+  document.getElementById('wordCount').textContent = '0 / 120 words';
+  document.getElementById('cardNum').value    = '';
+  document.getElementById('cardExp').value    = '';
+  document.getElementById('cardCvv').value    = '';
+  document.getElementById('dtabCard').className   = 'tab on';
+  document.getElementById('dtabCrypto').className = 'tab';
+  document.getElementById('donateCardTab').style.display   = '';
+  document.getElementById('donateCryptoTab').style.display = 'none';
+  document.getElementById('donateSendBtn').style.display   = '';
+  setCrypto('btc');
+  document.getElementById('donateBg').classList.add('show');
+};
+
+function closeDonate() {
+  document.getElementById('donateBg').classList.remove('show');
+  donateThoughtId = null;
+}
+window.closeDonate = closeDonate;
+
+async function sendDonate() {
+  const custom = document.getElementById('customAmt').value;
+  const amt    = custom || pickedAmt;
+  const msg    = document.getElementById('donateMsg').value.trim();
+  const cardNum = document.getElementById('cardNum').value.replace(/\s/g,'');
+  const cardExp = document.getElementById('cardExp').value;
+  const cardCvv = document.getElementById('cardCvv').value;
+
+  if (!amt || parseFloat(amt) <= 0) { toast('Pick or enter an amount.','err'); return; }
+  if (!cardNum || cardNum.length < 16) { toast('Enter a valid card number.','err'); return; }
+  if (!cardExp || cardExp.length < 5)  { toast('Enter expiry date.','err'); return; }
+  if (!cardCvv || cardCvv.length < 3)  { toast('Enter CVV.','err'); return; }
+
+  const btn = document.getElementById('donateSendBtn');
+  btn.disabled = true; btn.textContent = 'Processing…';
+
+  // Save donation to Firestore
+  try {
+    const thought = donateThoughtId;
+    const tSnap   = await getDoc(doc(db,'thoughts',thought));
+    if (tSnap.exists()) {
+      const ownerId = tSnap.data().owner;
+      if (ownerId) {
+        await addDoc(collection(db,'donations'), {
+          to:        ownerId,
+          thoughtId: thought,
+          amount:    parseFloat(amt),
+          message:   msg || null,
+          ts:        serverTimestamp(),
+          method:    'card'
+        });
+      }
+    }
+  } catch(e) { console.error(e); }
+
+  // Simulate payment success (replace with real Stripe in production)
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = 'Send donation';
+    closeDonate();
+    toast('$'+parseFloat(amt).toFixed(2)+' donated anonymously 💙', 'ok');
+  }, 1200);
+}
+window.sendDonate = sendDonate;
+
+window.pickAmt = (el, v) => {
+  document.querySelectorAll('.amt').forEach(b=>b.classList.remove('picked'));
+  el.classList.add('picked'); pickedAmt = v;
+  document.getElementById('customAmt').value = '';
+};
+
+/* ══════════════════════════════
+   PHASE 4 — COMMENTS
+══════════════════════════════ */
+const commentsCol = collection(db, 'comments');
+let activeThoughtId = null;
+let unsubComments   = null;
+
+window.openComments = async (thoughtId) => {
+  activeThoughtId = thoughtId;
+  document.getElementById('commentList').innerHTML    = '<div class="loading-spinner"><div class="spinner"></div></div>';
+  document.getElementById('commentInput').value       = '';
+  document.getElementById('commentsPage').classList.add('show');
+  document.getElementById('commentsPage').scrollTop   = 0;
+
+  // Show thought preview
+  const tSnap = await getDoc(doc(db,'thoughts',thoughtId));
+  const tData = tSnap.data() || {};
+  document.getElementById('commentThoughtPreview').innerHTML = `
+    <div style="background:var(--bg1);border:1px solid var(--bdr);border-radius:var(--r2);padding:14px 16px;">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">💬 Commenting on:</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.7;">${esc(tData.text||'')}</div>
+    </div>`;
+
+  // Real-time comments listener
+  if (unsubComments) { unsubComments(); unsubComments = null; }
+  const q = query(commentsCol, where('thoughtId','==',thoughtId), where('parentId','==',null));
+  unsubComments = onSnapshot(q, async snap => {
+    const comments = [];
+    snap.forEach(d => comments.push({ id:d.id, ...d.data() }));
+    comments.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
+    document.getElementById('commentCount').textContent = `Comments (${comments.length})`;
+    await renderComments(comments, thoughtId);
+  });
+};
+
+async function renderComments(comments, thoughtId) {
+  const list = document.getElementById('commentList');
+  list.innerHTML = '';
+  if (!comments.length) {
+    list.innerHTML = '<p style="font-size:13px;color:var(--text3);text-align:center;padding:30px 0;">No comments yet. Be the first!</p>';
+    return;
+  }
+
+  for (const c of comments) {
+    // Get replies
+    const rSnap = await getDocs(query(commentsCol, where('parentId','==',c.id)));
+    const replies = [];
+    rSnap.forEach(d => replies.push({ id:d.id, ...d.data() }));
+    replies.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
+
+    const card = buildCommentCard(c, false);
+    list.appendChild(card);
+
+    // Render replies
+    replies.forEach(r => list.appendChild(buildCommentCard(r, true)));
+
+    // Reply input row
+    const replyWrap = document.createElement('div');
+    replyWrap.className = 'reply-input-wrap';
+    replyWrap.id = 'reply_'+c.id;
+    replyWrap.innerHTML = `
+      <input type="text" placeholder="Write a reply…" maxlength="200" id="replyInput_${c.id}"
+             onkeydown="if(event.key==='Enter') postReply('${c.id}')">
+      <button class="btn btn-cyan" style="padding:6px 12px;font-size:12px;" onclick="postReply('${c.id}')">Reply</button>
+      <button class="btn btn-ghost" style="padding:6px 10px;font-size:12px;" onclick="toggleReplyBox('${c.id}')">✕</button>`;
+    list.appendChild(replyWrap);
+  }
+}
+
+function buildCommentCard(c, isReply) {
+  const div   = document.createElement('div');
+  div.className = 'comment-card'+(isReply?' reply':'');
+  div.id = 'cc_'+c.id;
+  const myLike = user && (c.likedBy||[]).includes(user.uid);
+  const likes  = (c.likes||0);
+
+  div.innerHTML = `
+    <div class="comment-head">
+      <span class="comment-anon">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        anonymous
+      </span>
+      <span class="comment-time">${timeAgo(c.ts?.toDate?c.ts.toDate():new Date())}</span>
+    </div>
+    <div class="comment-body">${esc(c.text||'')}</div>
+    <div class="comment-actions">
+      <button class="comment-like-btn ${myLike?'liked':''}" onclick="likeComment('${c.id}')">
+        ❤️ <span>${likes}</span>
+      </button>
+      ${!isReply ? `<button class="reply-btn" onclick="toggleReplyBox('${c.id}')">↩ Reply</button>` : ''}
+    </div>`;
+  return div;
+}
+
+window.toggleReplyBox = (commentId) => {
+  const wrap = document.getElementById('reply_'+commentId);
+  if (!wrap) return;
+  const isOpen = wrap.classList.contains('show');
+  wrap.classList.toggle('show', !isOpen);
+  if (!isOpen) setTimeout(() => document.getElementById('replyInput_'+commentId)?.focus(), 80);
+};
+
+window.postComment = async () => {
+  if (!user) { openAuth('in'); return; }
+  const text = document.getElementById('commentInput').value.trim();
+  if (!text) { toast('Write a comment first.','err'); return; }
+  await addDoc(commentsCol, {
+    thoughtId: activeThoughtId, parentId: null,
+    text, ts: serverTimestamp(), owner: user.uid,
+    likes: 0, likedBy: []
+  });
+  document.getElementById('commentInput').value = '';
+  toast('Comment posted!','ok');
+};
+
+window.postReply = async (parentId) => {
+  if (!user) { openAuth('in'); return; }
+  const input = document.getElementById('replyInput_'+parentId);
+  const text  = input?.value.trim();
+  if (!text) return;
+  await addDoc(commentsCol, {
+    thoughtId: activeThoughtId, parentId,
+    text, ts: serverTimestamp(), owner: user.uid,
+    likes: 0, likedBy: []
+  });
+  input.value = '';
+  document.getElementById('reply_'+parentId)?.classList.remove('show');
+  toast('Reply posted!','ok');
+};
+
+window.likeComment = async (commentId) => {
+  if (!user) { openAuth('in'); return; }
+  const ref   = doc(db,'comments',commentId);
+  const snap  = await getDoc(ref);
+  if (!snap.exists()) return;
+  const data  = snap.data();
+  const liked = (data.likedBy||[]).includes(user.uid);
+  if (liked) {
+    await updateDoc(ref, {
+      likes:   increment(-1),
+      likedBy: data.likedBy.filter(u=>u!==user.uid)
+    });
+  } else {
+    await updateDoc(ref, {
+      likes:   increment(1),
+      likedBy: [...(data.likedBy||[]), user.uid]
+    });
+  }
+};
+
+function closeComments() {
+  document.getElementById('commentsPage').classList.remove('show');
+  if (unsubComments) { unsubComments(); unsubComments = null; }
+  activeThoughtId = null;
+}
+window.closeComments = closeComments;
+
 /* expose globals needed by inline onclick */
-window.closeAuth=closeAuth; window.closeMsgModal=closeMsgModal; window.closeDonate=closeDonate;
+window.closeAuth=closeAuth; window.closeMsgModal=closeMsgModal; window.closeDonate=closeDonate; window.closeComments=closeComments;
 window.closeChat=closeChat; window.doLogout=doLogout; window.openSidebar=openSidebar;
 window.closeSidebar=closeSidebar; window.openInbox=openInbox; window.closeInbox=closeInbox;
 window.sendDonate=sendDonate; window.setTab=setTab; window.doAuth=doAuth;
