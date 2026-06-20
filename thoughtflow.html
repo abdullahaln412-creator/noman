@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,28 +177,54 @@ textarea::placeholder { color:var(--text3); }
 .amt.picked { border-color:var(--cyan); color:var(--cyan); background:var(--cyan-dim); }
 
 /* PROFILE MODAL */
-.profile-modal { max-width:440px; }
-.profile-modal-head {
-  display:flex; align-items:center; gap:14px; margin-bottom:20px;
-  padding-bottom:16px; border-bottom:1px solid var(--bdr);
+/* PROFILE PAGE */
+.profile-page {
+  display:none; position:fixed; inset:0; z-index:150;
+  background:var(--bg0); overflow-y:auto;
+  animation:rise 0.25s ease;
 }
-.profile-modal-avatar {
-  width:48px; height:48px; border-radius:50%;
-  background:var(--bg3); border:1px solid var(--cyan-bdr);
-  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
+.profile-page.show { display:block; }
+.profile-page-nav {
+  position:sticky; top:0; background:rgba(30,30,30,0.95);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--bdr);
+  display:flex; align-items:center; gap:12px;
+  padding:0 20px; height:48px; z-index:10;
 }
-.profile-modal-info { flex:1; }
-.profile-modal-name { font-size:14px; font-weight:600; color:var(--text); }
-.profile-modal-sub  { font-size:11px; color:var(--text3); margin-top:2px; }
-.profile-modal-stats {
+.back-btn {
+  background:transparent; border:none; color:var(--cyan);
+  font-size:13px; cursor:pointer; display:flex; align-items:center;
+  gap:6px; font-family:inherit; padding:0;
+}
+.back-btn:hover { opacity:0.75; }
+.profile-page-body { max-width:620px; margin:0 auto; padding:28px 16px 80px; }
+.profile-hero {
+  display:flex; align-items:center; gap:16px;
+  margin-bottom:24px; padding-bottom:20px;
+  border-bottom:1px solid var(--bdr);
+}
+.profile-hero-avatar {
+  width:64px; height:64px; border-radius:50%;
+  background:var(--bg3); border:2px solid var(--cyan-bdr);
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; flex-shrink:0;
+}
+.profile-hero-info { flex:1; }
+.profile-hero-name { font-size:16px; font-weight:600; color:var(--text); margin-bottom:4px; }
+.profile-hero-sub  { font-size:12px; color:var(--text3); }
+.profile-stats-row {
   display:grid; grid-template-columns:repeat(3,1fr);
-  gap:8px; margin-bottom:16px;
+  gap:10px; margin-bottom:24px;
 }
-.profile-modal-thoughts { max-height:240px; overflow-y:auto; }
 .profile-thought-item {
-  background:var(--bg2); border:1px solid var(--bdr);
-  border-radius:var(--r); padding:10px 12px; margin-bottom:8px;
-  font-size:13px; color:var(--text); line-height:1.55;
+  background:var(--bg1); border:1px solid var(--bdr);
+  border-radius:var(--r2); padding:14px 16px; margin-bottom:10px;
+  transition:border-color 0.15s;
+}
+.profile-thought-item:hover { border-color:var(--bdr2); }
+.profile-thought-text { font-size:14px; color:var(--text); line-height:1.7; margin-bottom:10px; }
+.profile-thought-meta {
+  display:flex; gap:10px; font-size:11px; color:var(--text3);
+  padding-top:10px; border-top:1px solid var(--bdr);
 }
 
 /* TOAST */
@@ -345,25 +370,35 @@ textarea::placeholder { color:var(--text3); }
   </div>
 </div>
 
-<!-- ANONYMOUS PROFILE MODAL -->
-<div class="modal-bg" id="profileModalBg">
-  <div class="modal profile-modal">
-    <div class="profile-modal-head">
-      <div class="profile-modal-avatar">🌀</div>
-      <div class="profile-modal-info">
-        <div class="profile-modal-name">Anonymous member</div>
-        <div class="profile-modal-sub" id="pmSub">Loading thoughts…</div>
+<!-- ANONYMOUS PROFILE PAGE -->
+<div class="profile-page" id="profilePage">
+  <div class="profile-page-nav">
+    <button class="back-btn" onclick="closeProfileModal()">
+      ← Back to feed
+    </button>
+    <span style="font-size:13px;color:var(--text2);">Anonymous Profile</span>
+  </div>
+  <div class="profile-page-body">
+
+    <div class="profile-hero">
+      <div class="profile-hero-avatar">🌀</div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name">Anonymous Member</div>
+        <div class="profile-hero-sub" id="pmSub">Loading…</div>
       </div>
-      <button class="btn btn-ghost" style="padding:5px 10px;flex-shrink:0;" onclick="closeProfileModal()">✕</button>
     </div>
-    <div class="profile-modal-stats">
+
+    <div class="profile-stats-row">
       <div class="sb-stat"><div class="n" id="pmThoughts">—</div><div class="l">Thoughts</div></div>
       <div class="sb-stat"><div class="n" id="pmReacts">—</div><div class="l">Reactions</div></div>
       <div class="sb-stat"><div class="n" id="pmViews">—</div><div class="l">Views</div></div>
     </div>
-    <div class="sb-section-title" style="margin-bottom:10px;">Their thoughts</div>
-    <div class="profile-modal-thoughts" id="pmThoughtList"></div>
-    <div style="margin-top:16px;" id="pmMsgWrap"></div>
+
+    <div id="pmMsgWrap" style="margin-bottom:20px;"></div>
+
+    <div class="sb-section-title" style="margin-bottom:12px;">Their thoughts</div>
+    <div id="pmThoughtList"></div>
+
   </div>
 </div>
 
@@ -746,24 +781,28 @@ window.sendMsgRequest = sendMsgRequest;
 window.openProfileModal = async (ownerId) => {
   if (!ownerId) return;
 
-  // Reset
+  // Show page immediately with loading state
   document.getElementById('pmSub').textContent       = 'Loading…';
   document.getElementById('pmThoughts').textContent  = '—';
   document.getElementById('pmReacts').textContent    = '—';
   document.getElementById('pmViews').textContent     = '—';
   document.getElementById('pmThoughtList').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
   document.getElementById('pmMsgWrap').innerHTML     = '';
-  document.getElementById('profileModalBg').classList.add('show');
+  document.getElementById('profilePage').classList.add('show');
+  document.getElementById('profilePage').scrollTop   = 0;
 
-  // Load their thoughts
-  const snap = await getDocs(query(thoughtsCol, where('owner','==',ownerId), orderBy('ts','desc')));
+  // Load their thoughts — NO orderBy to avoid index requirement
+  const snap = await getDocs(query(thoughtsCol, where('owner','==',ownerId)));
   const thoughts = [];
   snap.forEach(d => thoughts.push({ id:d.id, ...d.data() }));
+
+  // Sort manually newest first
+  thoughts.sort((a,b) => (b.ts?.seconds||0) - (a.ts?.seconds||0));
 
   const totalReacts = thoughts.reduce((s,t) => s+(t.li||0)+(t.lo||0)+(t.di||0), 0);
   const totalViews  = thoughts.reduce((s,t) => s+(t.views||0), 0);
 
-  document.getElementById('pmSub').textContent      = thoughts.length + ' thoughts shared';
+  document.getElementById('pmSub').textContent      = thoughts.length + ' thought' + (thoughts.length!==1?'s':'') + ' shared';
   document.getElementById('pmThoughts').textContent = thoughts.length;
   document.getElementById('pmReacts').textContent   = totalReacts;
   document.getElementById('pmViews').textContent    = totalViews;
@@ -772,32 +811,36 @@ window.openProfileModal = async (ownerId) => {
   const list = document.getElementById('pmThoughtList');
   list.innerHTML = '';
   if (!thoughts.length) {
-    list.innerHTML = '<p style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;">No thoughts yet.</p>';
+    list.innerHTML = '<p style="font-size:13px;color:var(--text3);text-align:center;padding:30px 0;">No thoughts shared yet.</p>';
   } else {
     thoughts.forEach(t => {
       const el = document.createElement('div');
       el.className = 'profile-thought-item';
       el.innerHTML = `
-        <div>${esc((t.text||'').length>120 ? t.text.slice(0,120)+'…' : (t.text||''))}</div>
-        <div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--text3);">
-          <span>👍 ${t.li||0}</span><span>❤️ ${t.lo||0}</span><span>👎 ${t.di||0}</span>
+        <div class="profile-thought-text">${esc(t.text||'')}</div>
+        <div class="profile-thought-meta">
+          <span>👍 ${t.li||0}</span>
+          <span>❤️ ${t.lo||0}</span>
+          <span>👎 ${t.di||0}</span>
           <span style="margin-left:auto;">${timeAgo(t.ts?.toDate?t.ts.toDate():new Date())}</span>
         </div>`;
       list.appendChild(el);
     });
   }
 
-  // Show message button if not own profile
+  // Message button
   const msgWrap = document.getElementById('pmMsgWrap');
-  if (user && ownerId !== user.uid) {
+  if (!user) {
+    msgWrap.innerHTML = `<button class="btn btn-blue" style="width:100%;padding:11px;" onclick="openAuth('in')">Sign in to send a message request</button>`;
+  } else if (ownerId !== user.uid) {
     const existing = await getDocs(query(requestsCol, where('from','==',user.uid), where('to','==',ownerId)));
     if (existing.empty) {
-      msgWrap.innerHTML = `<button class="btn btn-blue" style="width:100%;padding:10px;" onclick="openMsgFromProfile('${ownerId}')">✉ Send message request</button>`;
+      msgWrap.innerHTML = `<button class="btn btn-blue" style="width:100%;padding:11px;" onclick="openMsgFromProfile('${ownerId}')">✉ Send message request</button>`;
     } else {
-      const req = existing.docs[0].data();
-      const statusColor = req.status==='accepted'?'var(--green)':req.status==='declined'?'var(--red)':'var(--text3)';
-      const statusLabel = req.status==='accepted'?'✓ Request accepted':req.status==='declined'?'✗ Request declined':'⏳ Request pending';
-      msgWrap.innerHTML = `<div style="text-align:center;font-size:12px;color:${statusColor};padding:8px;">${statusLabel}</div>`;
+      const req        = existing.docs[0].data();
+      const statusColor= req.status==='accepted'?'var(--green)':req.status==='declined'?'var(--red)':'var(--amber)';
+      const statusLabel= req.status==='accepted'?'✓ Request accepted — check your inbox':req.status==='declined'?'✗ Request declined':'⏳ Request pending';
+      msgWrap.innerHTML= `<div style="text-align:center;font-size:13px;color:${statusColor};padding:12px;background:var(--bg2);border-radius:var(--r);border:1px solid var(--bdr);">${statusLabel}</div>`;
     }
   }
 };
@@ -812,7 +855,7 @@ window.openMsgFromProfile = (ownerId) => {
 };
 
 function closeProfileModal() {
-  document.getElementById('profileModalBg').classList.remove('show');
+  document.getElementById('profilePage').classList.remove('show');
 }
 window.closeProfileModal = closeProfileModal;
 
@@ -1146,10 +1189,10 @@ document.getElementById('authBg').addEventListener('click',   e=>{if(e.target.id
 document.getElementById('donateBg').addEventListener('click', e=>{if(e.target.id==='donateBg') closeDonate();});
 document.getElementById('msgBg').addEventListener('click',    e=>{if(e.target.id==='msgBg')    closeMsgModal();});
 document.getElementById('chatBg').addEventListener('click',   e=>{if(e.target.id==='chatBg')   closeChat();});
-document.getElementById('profileModalBg').addEventListener('click', e=>{if(e.target.id==='profileModalBg') closeProfileModal();});
+// profile page uses back button — no backdrop listener needed
 document.getElementById('sbBg').addEventListener('click',     ()=>closeSidebar());
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();closeProfileModal();}
+  if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeChat();closeMsgModal();}
 });
 
 /* expose globals needed by inline onclick */
