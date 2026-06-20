@@ -519,18 +519,25 @@ function makeCard(id, t) {
 /* ══════════════════════════════
    VIEWS — count after feed renders
 ══════════════════════════════ */
-const viewedSession = new Set();
+// Use localStorage so views persist across refreshes — one view per browser per thought
+const viewedKey = 'tf_viewed';
+function getViewed() { try { return new Set(JSON.parse(localStorage.getItem(viewedKey)||'[]')); } catch(e){ return new Set(); } }
+function saveViewed(set) { localStorage.setItem(viewedKey, JSON.stringify([...set])); }
 
 function recordViewsForFeed(snap) {
   if (!snap) return;
+  const viewed = getViewed();
+  let changed  = false;
   snap.forEach(d => {
     const t    = d.data();
     const mine = user && t.owner === user.uid;
-    if (!mine && t.owner && !viewedSession.has(d.id)) {
-      viewedSession.add(d.id);
+    if (!mine && t.owner && !viewed.has(d.id)) {
+      viewed.add(d.id);
+      changed = true;
       updateDoc(doc(db,'thoughts',d.id), { views: increment(1) }).catch(()=>{});
     }
   });
+  if (changed) saveViewed(viewed);
 }
 
 
@@ -708,13 +715,15 @@ async function loadRequests() {
   container.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
 
   const [inSnap, outSnap] = await Promise.all([
-    getDocs(query(requestsCol, where('to','==',user.uid), orderBy('ts','desc'))),
-    getDocs(query(requestsCol, where('from','==',user.uid), orderBy('ts','desc')))
+    getDocs(query(requestsCol, where('to','==',user.uid))),
+    getDocs(query(requestsCol, where('from','==',user.uid)))
   ]);
 
   const incoming = [], outgoing = [];
   inSnap.forEach(d  => incoming.push({ id:d.id, ...d.data() }));
   outSnap.forEach(d => outgoing.push({ id:d.id, ...d.data() }));
+  incoming.sort((a,b) => (b.ts?.seconds||0) - (a.ts?.seconds||0));
+  outgoing.sort((a,b) => (b.ts?.seconds||0) - (a.ts?.seconds||0));
 
   let html = '';
   if (!incoming.length && !outgoing.length) {
