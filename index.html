@@ -19,35 +19,65 @@
 body { background:var(--bg0); color:var(--text); font-family:'Inter','Segoe UI',sans-serif; font-size:14px; line-height:1.6; min-height:100vh; }
 
 /* NAV */
-.nav { position:sticky; top:0; z-index:50; background:var(--bg1); border-bottom:1px solid var(--bdr); display:flex; align-items:center; justify-content:space-between; padding:0 24px; height:48px; }
-.logo { font-size:15px; font-weight:600; color:var(--cyan); letter-spacing:0.2px; display:flex; align-items:center; gap:8px; }
-.logo-dot { width:7px; height:7px; background:var(--cyan); border-radius:50%; animation:blink 2.5s ease-in-out infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.nav-actions { display:flex; align-items:center; gap:8px; }
-.nav-icon-wrap { position:relative; }
-.nav-icon-btn {
-  width:40px; height:40px; border-radius:10px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:18px; cursor:pointer; border:none;
-  transition:all 0.2s; position:relative;
+.nav {
+  position:sticky; top:0; z-index:50;
+  background:var(--bg1); border-bottom:1px solid var(--bdr);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; height:56px;
 }
-.notif-btn  { background:rgba(206,145,120,0.15); color:#ce9178; }
-.notif-btn:hover  { background:rgba(206,145,120,0.3); transform:scale(1.08); }
-.msg-btn-nav { background:rgba(86,156,214,0.15); color:#569cd6; }
-.msg-btn-nav:hover { background:rgba(86,156,214,0.3); transform:scale(1.08); }
-.profile-btn-nav { background:rgba(78,201,176,0.15); color:#4ec9b0; }
-.profile-btn-nav:hover { background:rgba(78,201,176,0.3); transform:scale(1.08); }
+.logo {
+  font-size:16px; font-weight:700; color:var(--cyan);
+  letter-spacing:0.3px; display:flex; align-items:center; gap:8px;
+  cursor:pointer;
+}
+.logo-dot {
+  width:8px; height:8px; background:var(--cyan);
+  border-radius:50%; animation:blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* Facebook-style nav buttons */
+.nav-actions { display:flex; align-items:center; gap:4px; }
+
+.nav-tab {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:3px;
+  padding:6px 14px; border-radius:10px;
+  cursor:pointer; border:none; background:transparent;
+  transition:background 0.15s; position:relative;
+  min-width:60px;
+}
+.nav-tab:hover { background:var(--bg2); }
+.nav-tab.active { background:var(--bg2); }
+.nav-tab.active .nav-tab-icon { color:var(--cyan); }
+.nav-tab.active::after {
+  content:''; position:absolute; bottom:-1px; left:16px; right:16px;
+  height:2px; background:var(--cyan); border-radius:2px 2px 0 0;
+}
+
+.nav-tab-icon {
+  font-size:20px; line-height:1; color:var(--text2);
+  transition:color 0.15s;
+}
+.nav-tab-label {
+  font-size:10px; font-weight:500; color:var(--text3);
+  letter-spacing:0.3px; white-space:nowrap;
+}
+
+.nav-tab-wrap { position:relative; }
 .nav-badge {
-  position:absolute; top:-4px; right:-4px;
+  position:absolute; top:2px; right:6px;
   background:var(--red); color:#fff;
   font-size:10px; font-weight:700;
   min-width:17px; height:17px; border-radius:9px;
   display:none; align-items:center; justify-content:center;
-  padding:0 4px; border:2px solid var(--bg1);
+  padding:0 4px; border:2px solid var(--bg1); z-index:1;
 }
 .nav-badge.show { display:flex; }
-/* keep old bell-badge for compat */
 .bell-badge { display:none; }
+
+/* Auth buttons */
+.nav-auth { display:flex; align-items:center; gap:8px; }
 
 /* BUTTONS */
 .btn { border:none; border-radius:var(--r); font-family:inherit; font-size:13px; font-weight:500; cursor:pointer; padding:6px 14px; transition:all 0.15s; line-height:1; }
@@ -246,70 +276,96 @@ textarea::placeholder { color:var(--text3); }
   padding-top:10px; border-top:1px solid var(--bdr);
 }
 
-/* ── COMMENTS BOTTOM SHEET (Instagram style) ── */
-.comment-sheet-bg {
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,0.6); z-index:300;
-  backdrop-filter:blur(2px);
-}
-.comment-sheet-bg.show { display:block; }
+/* bottom sheet removed — using inline comments */
 
-.comment-sheet {
-  position:fixed; left:0; right:0; bottom:0; z-index:301;
-  background:var(--bg1);
-  border-radius:20px 20px 0 0;
-  border-top:1px solid var(--bdr2);
-  max-height:80vh;
-  display:flex; flex-direction:column;
-  transform:translateY(100%);
-  transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
+/* ── INLINE COMMENTS (accordion in feed) ── */
+.inline-comments {
+  display:none; border-top:1px solid var(--bdr);
+  margin-top:12px; padding-top:12px;
+  animation:rise 0.2s ease;
 }
-.comment-sheet.show { transform:translateY(0); }
+.inline-comments.open { display:block; }
 
-.comment-sheet-handle {
-  width:40px; height:4px; background:var(--bg3);
-  border-radius:2px; margin:12px auto 0; flex-shrink:0;
-}
+.inline-comment-list { margin-bottom:10px; }
 
-.comment-sheet-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:12px 16px 10px; border-bottom:1px solid var(--bdr);
-  flex-shrink:0;
+.inline-comment-item {
+  display:flex; gap:8px; margin-bottom:10px;
 }
-.comment-sheet-title { font-size:14px; font-weight:600; color:var(--text); }
-.comment-sheet-close {
-  background:var(--bg2); border:1px solid var(--bdr);
-  color:var(--text2); width:28px; height:28px;
-  border-radius:50%; cursor:pointer; font-size:14px;
+.inline-avatar {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--bdr);
   display:flex; align-items:center; justify-content:center;
-  transition:all 0.15s; flex-shrink:0;
+  font-size:11px; flex-shrink:0; margin-top:1px;
 }
-.comment-sheet-close:hover { color:var(--text); background:var(--bg3); }
-
-.comment-sheet-list {
-  flex:1; overflow-y:auto; padding:12px 16px;
+.inline-comment-body-wrap { flex:1; min-width:0; }
+.inline-comment-bubble {
+  background:var(--bg2); border-radius:0 10px 10px 10px;
+  padding:7px 12px; display:inline-block;
+  max-width:100%; word-break:break-word;
 }
-
-.comment-sheet-input {
+.inline-comment-name { font-size:11px; font-weight:600; color:var(--text2); margin-bottom:2px; }
+.inline-comment-text { font-size:13px; color:var(--text); line-height:1.5; }
+.inline-comment-meta {
   display:flex; align-items:center; gap:10px;
-  padding:10px 16px 16px; border-top:1px solid var(--bdr);
-  background:var(--bg1); flex-shrink:0;
+  margin-top:4px; padding-left:2px;
 }
-.comment-sheet-input input {
-  flex:1; background:var(--bg2);
-  border:1px solid var(--bdr); border-radius:20px;
-  color:var(--text); font-family:inherit; font-size:13px;
-  padding:9px 16px; outline:none; transition:border-color 0.15s;
+.inline-comment-time { font-size:11px; color:var(--text3); }
+.inline-like-btn {
+  background:none; border:none; font-size:11px;
+  color:var(--text3); cursor:pointer; font-family:inherit;
+  padding:0; display:flex; align-items:center; gap:3px;
+  transition:color 0.15s;
 }
-.comment-sheet-input input:focus { border-color:var(--cyan-bdr); }
-.comment-sheet-input input::placeholder { color:var(--text3); }
-.comment-post-btn {
+.inline-like-btn:hover { color:var(--red); }
+.inline-like-btn.liked { color:var(--red); font-weight:600; }
+.inline-reply-btn {
+  background:none; border:none; font-size:11px;
+  color:var(--text3); cursor:pointer; font-family:inherit;
+  padding:0; transition:color 0.15s;
+}
+.inline-reply-btn:hover { color:var(--cyan); }
+
+/* Replies */
+.inline-replies { margin-left:36px; margin-top:6px; }
+.inline-reply-item { display:flex; gap:6px; margin-bottom:8px; }
+.inline-reply-avatar {
+  width:22px; height:22px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--bdr);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; flex-shrink:0;
+}
+.inline-reply-input-row {
+  display:none; gap:8px; align-items:center;
+  margin-top:6px; margin-left:36px;
+}
+.inline-reply-input-row.show { display:flex; }
+.inline-reply-input-row input {
+  flex:1; background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:20px; color:var(--text); font-family:inherit;
+  font-size:12px; padding:6px 12px; outline:none;
+  transition:border-color 0.15s;
+}
+.inline-reply-input-row input:focus { border-color:var(--cyan-bdr); }
+
+/* Input row at bottom */
+.inline-comment-input-row {
+  display:flex; gap:8px; align-items:center;
+  padding-top:10px; border-top:1px solid var(--bdr);
+}
+.inline-comment-input-row input {
+  flex:1; background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:20px; color:var(--text); font-family:inherit;
+  font-size:13px; padding:8px 14px; outline:none;
+  transition:border-color 0.15s;
+}
+.inline-comment-input-row input:focus { border-color:var(--cyan-bdr); }
+.inline-comment-input-row input::placeholder { color:var(--text3); }
+.inline-post-btn {
   background:none; border:none; color:var(--cyan);
   font-size:13px; font-weight:600; cursor:pointer;
-  font-family:inherit; padding:0 4px; white-space:nowrap;
-  transition:opacity 0.15s;
+  font-family:inherit; white-space:nowrap; transition:opacity 0.15s;
 }
-.comment-post-btn:hover { opacity:0.7; }
+.inline-post-btn:hover { opacity:0.7; }
 
 /* Comment items */
 .comment-item {
@@ -388,20 +444,36 @@ textarea::placeholder { color:var(--text3); }
 <body>
 
 <nav class="nav">
-  <div class="logo" onclick="scrollToTop()" style="cursor:pointer;" title="Back to top"><span class="logo-dot"></span>ThoughtFlow</div>
-  <div class="nav-actions">
-    <!-- Notification bell (shown when logged in) -->
-    <div class="nav-icon-wrap" id="notifWrap" style="display:none;">
-      <button class="nav-icon-btn notif-btn" onclick="openNotifs()" title="Notifications">🔔</button>
+  <div class="logo" onclick="scrollToTop()" title="Back to top">
+    <span class="logo-dot"></span>ThoughtFlow
+  </div>
+
+  <!-- Logged-in nav tabs (Facebook style) -->
+  <div class="nav-actions" id="navTabs" style="display:none;">
+    <div class="nav-tab-wrap" id="notifWrap">
+      <button class="nav-tab" id="notifTab" onclick="togglePanel('notif')">
+        <span class="nav-tab-icon">🔔</span>
+        <span class="nav-tab-label">Notifications</span>
+      </button>
       <span class="nav-badge" id="notifBadge"></span>
     </div>
-    <!-- Messages bell (shown when logged in) -->
-    <div class="nav-icon-wrap" id="bellWrap" style="display:none;">
-      <button class="nav-icon-btn msg-btn-nav" onclick="openInbox()" title="Messages">✉️</button>
+    <div class="nav-tab-wrap" id="bellWrap">
+      <button class="nav-tab" id="msgTab" onclick="togglePanel('msg')">
+        <span class="nav-tab-icon">✉️</span>
+        <span class="nav-tab-label">Messages</span>
+      </button>
       <span class="nav-badge" id="bellBadge"></span>
     </div>
-    <!-- Profile button (shown when logged in) -->
-    <button class="nav-icon-btn profile-btn-nav" id="btnProfile" style="display:none;" onclick="openSidebar()" title="My profile">👤</button>
+    <div class="nav-tab-wrap">
+      <button class="nav-tab" id="btnProfile" onclick="togglePanel('profile')">
+        <span class="nav-tab-icon">👤</span>
+        <span class="nav-tab-label">Profile</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Auth buttons (logged out) -->
+  <div class="nav-auth" id="navAuth">
     <button class="btn btn-outline" id="btnSignIn">Sign in</button>
     <button class="btn btn-cyan"    id="btnJoin">Join free</button>
   </div>
@@ -536,24 +608,7 @@ textarea::placeholder { color:var(--text3); }
   </div>
 </div>
 
-<!-- COMMENTS BOTTOM SHEET -->
-<div class="comment-sheet-bg" id="commentSheetBg" onclick="closeComments()"></div>
-<div class="comment-sheet" id="commentSheet">
-  <div class="comment-sheet-handle"></div>
-  <div class="comment-sheet-header">
-    <span class="comment-sheet-title" id="commentCount">Comments</span>
-    <button class="comment-sheet-close" onclick="closeComments()">✕</button>
-  </div>
-  <div class="comment-sheet-list" id="commentList">
-    <div class="loading-spinner"><div class="spinner"></div></div>
-  </div>
-  <div class="comment-sheet-input">
-    <div class="comment-avatar">🌀</div>
-    <input type="text" id="commentInput" placeholder="Add a comment…" maxlength="300"
-           onkeydown="if(event.key==='Enter') postComment()">
-    <button class="comment-post-btn" onclick="postComment()">Post</button>
-  </div>
-</div>
+<!-- comments rendered inline in feed -->
 
 <!-- PROFILE SIDEBAR -->
 <div class="sidebar-bg" id="sbBg" onclick="closeSidebar()"></div>
@@ -576,7 +631,7 @@ textarea::placeholder { color:var(--text3); }
 <div class="inbox-sidebar" id="inboxSidebar">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
     <div style="font-size:15px;font-weight:600;">Inbox</div>
-    <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="closeInbox()">✕</button>
+    <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="togglePanel('msg')">✕</button>
   </div>
   <div class="inbox-tabs">
     <button class="inbox-tab on" id="itabReq"   onclick="switchInboxTab('requests')">Requests <span class="dot" id="reqDot"></span></button>
@@ -590,7 +645,7 @@ textarea::placeholder { color:var(--text3); }
 <div class="inbox-sidebar" id="notifSidebar" style="border-right:1px solid var(--bdr2);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
     <div style="font-size:15px;font-weight:600;">Notifications</div>
-    <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="closeNotifs()">✕</button>
+    <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="togglePanel('notif')">✕</button>
   </div>
   <div id="notifList">
     <div class="loading-spinner"><div class="spinner"></div></div>
@@ -691,21 +746,15 @@ const chatsCol     = collection(db, 'chats');
 onAuthStateChanged(auth, async u => {
   if (u) {
     user = u;
-    document.getElementById('btnSignIn').style.display  = 'none';
-    document.getElementById('btnJoin').style.display    = 'none';
-    document.getElementById('bellWrap').style.display   = '';
-    document.getElementById('notifWrap').style.display  = '';
-    document.getElementById('btnProfile').style.display = '';
+    document.getElementById('navAuth').style.display = 'none';
+    document.getElementById('navTabs').style.display  = '';
     startInboxListener();
     startNotifListener();
     renderFeed();
   } else {
     user = null;
-    document.getElementById('btnSignIn').style.display  = '';
-    document.getElementById('btnJoin').style.display    = '';
-    document.getElementById('bellWrap').style.display   = 'none';
-    document.getElementById('notifWrap').style.display  = 'none';
-    document.getElementById('btnProfile').style.display = 'none';
+    document.getElementById('navAuth').style.display = '';
+    document.getElementById('navTabs').style.display  = 'none';
     if (unsubInbox)       { unsubInbox(); unsubInbox = null; }
     if (unsubChatListener){ unsubChatListener(); unsubChatListener = null; }
     if (unsubNotifs)      { unsubNotifs(); unsubNotifs = null; }
@@ -771,7 +820,9 @@ function showErr(msg) {
 }
 async function doLogout() {
   await signOut(auth);
-  closeSidebar(); closeInbox(); closeNotifs();
+  document.getElementById('navAuth').style.display = '';
+  document.getElementById('navTabs').style.display  = 'none';
+  closeAllPanels();
   toast('Signed out.', '');
 }
 document.getElementById('fPass').addEventListener('keydown', e => { if(e.key==='Enter') doAuth(); });
@@ -845,7 +896,7 @@ function makeCard(id, t) {
       <button class="rbtn ${myRx==='lo'?'on-love':''}"    onclick="doReact('${id}','lo')">❤️ <span class="n">${lo}</span></button>
       <button class="rbtn ${myRx==='di'?'on-dislike':''}" onclick="doReact('${id}','di')">👎 <span class="n">${di}</span></button>
       <button class="donate-btn" onclick="openDonate('${id}')">💙 Donate</button>
-      <button class="msg-btn" style="border-color:rgba(78,201,176,0.25);color:var(--cyan);" id="cmtbtn_${id}" onclick="openComments('${id}')">💬 <span id="cmtcount_${id}">${t.commentCount||0}</span></button>
+      <button class="msg-btn" style="border-color:rgba(78,201,176,0.25);color:var(--cyan);" id="cmtbtn_${id}" onclick="toggleComments('${id}')">💬 <span id="cmtcount_${id}">${t.commentCount||0}</span></button>
       ${!mine && t.owner ? `<button class="msg-btn" id="msgbtn_${id}" onclick="openMsgModal('${id}','${t.owner}')">✉ Message</button>` : ''}
       ${mine ? `<span class="views-chip">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -853,6 +904,16 @@ function makeCard(id, t) {
       </span>` : ''}
     </div>
     ${mine ? `<div class="owner-bar"><span class="label">◆ your thought</span><span>👍 ${li}</span><span>❤️ ${lo}</span><span>👎 ${di}</span><span style="margin-left:auto;">👁 ${views}</span></div>` : ''}
+
+    <div class="inline-comments" id="comments_${id}">
+      <div class="inline-comment-list" id="clist_${id}"></div>
+      <div class="inline-comment-input-row">
+        <div class="inline-avatar">🌀</div>
+        <input type="text" id="cinput_${id}" placeholder="Write a comment…" maxlength="300"
+               onkeydown="if(event.key==='Enter') postInlineComment('${id}')">
+        <button class="inline-post-btn" onclick="postInlineComment('${id}')">Post</button>
+      </div>
+    </div>
   `;
 
   // check msg button after card is in DOM
@@ -978,6 +1039,7 @@ async function openSidebar() {
 function closeSidebar() {
   document.getElementById('sbBg').classList.remove('show');
   document.getElementById('sidebar').classList.remove('show');
+  document.getElementById('btnProfile').classList.remove('active');
 }
 
 /* ══════════════════════════════
@@ -1009,6 +1071,7 @@ async function sendNotif(toUid, type, text) {
 }
 
 window.openNotifs = async () => {
+  document.getElementById('notifTab').classList.add('active');
   document.getElementById('notifSidebar').classList.add('show');
   const list = document.getElementById('notifList');
   list.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
@@ -1043,6 +1106,7 @@ window.openNotifs = async () => {
 
 function closeNotifs() {
   document.getElementById('notifSidebar').classList.remove('show');
+  document.getElementById('notifTab').classList.remove('active');
 }
 window.closeNotifs = closeNotifs;
 
@@ -1254,7 +1318,10 @@ window.openInbox = () => {
   switchInboxTab(chatDot ? 'chats' : 'requests');
   document.getElementById('inboxSidebar').classList.add('show');
 };
-function closeInbox() { document.getElementById('inboxSidebar').classList.remove('show'); }
+function closeInbox() {
+  document.getElementById('inboxSidebar').classList.remove('show');
+  document.getElementById('msgTab').classList.remove('active');
+}
 
 window.switchInboxTab = tab => {
   document.getElementById('itabReq').className   = 'inbox-tab'+(tab==='requests'?' on':'');
@@ -1662,153 +1729,124 @@ window.pickAmt = (el, v) => {
 };
 
 /* ══════════════════════════════
-   PHASE 4 — COMMENTS (Instagram bottom sheet)
+   PHASE 4 — COMMENTS (Inline accordion)
 ══════════════════════════════ */
-const commentsCol   = collection(db, 'comments');
-let activeThoughtId = null;
-let unsubComments   = null;
-let replyingTo      = null; // commentId being replied to
+const commentsCol    = collection(db, 'comments');
+const openCommentIds = new Set();
+const commentUnsubs  = {};
 
-window.openComments = async (thoughtId) => {
-  activeThoughtId = thoughtId;
-  replyingTo      = null;
-  document.getElementById('commentList').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
-  document.getElementById('commentInput').value    = '';
-  document.getElementById('commentInput').placeholder = 'Add a comment…';
+window.toggleComments = (thoughtId) => {
+  const section = document.getElementById('comments_'+thoughtId);
+  if (!section) return;
+  const isOpen = section.classList.contains('open');
+  if (isOpen) {
+    section.classList.remove('open');
+    openCommentIds.delete(thoughtId);
+    if (commentUnsubs[thoughtId]) { commentUnsubs[thoughtId](); delete commentUnsubs[thoughtId]; }
+  } else {
+    section.classList.add('open');
+    openCommentIds.add(thoughtId);
+    loadInlineComments(thoughtId);
+    setTimeout(()=>document.getElementById('cinput_'+thoughtId)?.focus(), 200);
+  }
+};
 
-  // Show sheet
-  document.getElementById('commentSheetBg').classList.add('show');
-  document.getElementById('commentSheet').classList.add('show');
-  setTimeout(() => document.getElementById('commentInput').focus(), 400);
-
-  // Real-time listener for top-level comments
-  if (unsubComments) { unsubComments(); unsubComments = null; }
+function loadInlineComments(thoughtId) {
+  const listEl = document.getElementById('clist_'+thoughtId);
+  if (!listEl) return;
+  listEl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px 0;">Loading…</div>';
+  if (commentUnsubs[thoughtId]) { commentUnsubs[thoughtId](); }
   const q = query(commentsCol, where('thoughtId','==',thoughtId), where('parentId','==',null));
-  unsubComments = onSnapshot(q, async snap => {
+  commentUnsubs[thoughtId] = onSnapshot(q, async snap => {
     const comments = [];
     snap.forEach(d => comments.push({ id:d.id, ...d.data() }));
     comments.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
-    document.getElementById('commentCount').textContent = 'Comments (' + comments.length + ')';
-    await renderComments(comments);
+    const countEl = document.getElementById('cmtcount_'+thoughtId);
+    if (countEl) countEl.textContent = comments.length;
+    if (!comments.length) { listEl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px 0;">No comments yet.</div>'; return; }
+    listEl.innerHTML = '';
+    for (const c of comments) {
+      const rSnap = await getDocs(query(commentsCol, where('parentId','==',c.id)));
+      const replies = [];
+      rSnap.forEach(d => replies.push({ id:d.id, ...d.data() }));
+      replies.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
+      listEl.appendChild(buildInlineComment(c, replies, thoughtId));
+    }
   });
-};
-
-async function renderComments(comments) {
-  const list = document.getElementById('commentList');
-  if (!comments.length) {
-    list.innerHTML = '<p style="font-size:13px;color:var(--text3);text-align:center;padding:30px 0;">No comments yet.<br>Be the first to comment!</p>';
-    return;
-  }
-  list.innerHTML = '';
-  for (const c of comments) {
-    // fetch replies
-    const rSnap = await getDocs(query(commentsCol, where('parentId','==',c.id)));
-    const replies = [];
-    rSnap.forEach(d => replies.push({ id:d.id, ...d.data() }));
-    replies.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
-
-    // Build comment item
-    const item = document.createElement('div');
-    item.className = 'comment-item';
-    const myLike = user && (c.likedBy||[]).includes(user.uid);
-    item.innerHTML = `
-      <div class="comment-avatar">🌀</div>
-      <div class="comment-content">
-        <div class="comment-name">Anonymous</div>
-        <div class="comment-body">${esc(c.text||'')}</div>
-        <div class="comment-meta">
-          <span class="comment-time">${timeAgo(c.ts?.toDate?c.ts.toDate():new Date())}</span>
-          <button class="comment-like-btn ${myLike?'liked':''}" onclick="likeComment('${c.id}')">
-            ❤️ ${c.likes||0}
-          </button>
-          <button class="reply-btn" onclick="startReply('${c.id}','Anonymous')">Reply</button>
-        </div>
-
-        <!-- Replies -->
-        ${replies.length ? `<div class="replies-wrap">
-          ${replies.map(r => {
-            const rLiked = user && (r.likedBy||[]).includes(user.uid);
-            return `<div class="reply-item">
-              <div class="reply-avatar">🌀</div>
-              <div class="comment-content">
-                <div class="comment-name">Anonymous</div>
-                <div class="comment-body">${esc(r.text||'')}</div>
-                <div class="comment-meta">
-                  <span class="comment-time">${timeAgo(r.ts?.toDate?r.ts.toDate():new Date())}</span>
-                  <button class="comment-like-btn ${rLiked?'liked':''}" onclick="likeComment('${r.id}')">
-                    ❤️ ${r.likes||0}
-                  </button>
-                </div>
-              </div>
-            </div>`;
-          }).join('')}
-        </div>` : ''}
-
-        <!-- Reply input -->
-        <div class="reply-input-row" id="replyRow_${c.id}">
-          <input type="text" placeholder="Reply to Anonymous…" maxlength="200"
-                 id="replyIn_${c.id}"
-                 onkeydown="if(event.key==='Enter') submitReply('${c.id}')">
-          <button class="comment-post-btn" onclick="submitReply('${c.id}')">Post</button>
-          <button class="reply-btn" onclick="cancelReply('${c.id}')">✕</button>
-        </div>
-      </div>`;
-    list.appendChild(item);
-  }
 }
 
-window.startReply = (commentId, name) => {
-  // Close any open reply box first
-  document.querySelectorAll('.reply-input-row.show').forEach(el => el.classList.remove('show'));
-  replyingTo = commentId;
-  const row = document.getElementById('replyRow_'+commentId);
-  if (row) {
-    row.classList.add('show');
-    setTimeout(() => document.getElementById('replyIn_'+commentId)?.focus(), 80);
-  }
+function buildInlineComment(c, replies, thoughtId) {
+  const wrap = document.createElement('div');
+  const myLike = user && (c.likedBy||[]).includes(user.uid);
+  wrap.innerHTML = `
+    <div class="inline-comment-item" id="ic_${c.id}">
+      <div class="inline-avatar">🌀</div>
+      <div class="inline-comment-body-wrap">
+        <div class="inline-comment-bubble">
+          <div class="inline-comment-name">Anonymous</div>
+          <div class="inline-comment-text">${esc(c.text||'')}</div>
+        </div>
+        <div class="inline-comment-meta">
+          <span class="inline-comment-time">${timeAgo(c.ts?.toDate?c.ts.toDate():new Date())}</span>
+          <button class="inline-like-btn ${myLike?'liked':''}" onclick="likeComment('${c.id}')">❤️ ${c.likes||0}</button>
+          <button class="inline-reply-btn" onclick="toggleInlineReply('${c.id}')">Reply</button>
+        </div>
+        ${replies.length ? `<div class="inline-replies">${replies.map(r => {
+          const rl = user && (r.likedBy||[]).includes(user.uid);
+          return `<div class="inline-reply-item">
+            <div class="inline-reply-avatar">🌀</div>
+            <div class="inline-comment-body-wrap">
+              <div class="inline-comment-bubble">
+                <div class="inline-comment-name">Anonymous</div>
+                <div class="inline-comment-text">${esc(r.text||'')}</div>
+              </div>
+              <div class="inline-comment-meta">
+                <span class="inline-comment-time">${timeAgo(r.ts?.toDate?r.ts.toDate():new Date())}</span>
+                <button class="inline-like-btn ${rl?'liked':''}" onclick="likeComment('${r.id}')">❤️ ${r.likes||0}</button>
+              </div>
+            </div>
+          </div>`;}).join('')}</div>` : ''}
+        <div class="inline-reply-input-row" id="rir_${c.id}">
+          <input type="text" placeholder="Reply…" maxlength="200" id="ri_${c.id}"
+                 onkeydown="if(event.key==='Enter') submitInlineReply('${c.id}','${thoughtId}')">
+          <button class="inline-post-btn" onclick="submitInlineReply('${c.id}','${thoughtId}')">Post</button>
+          <button class="inline-reply-btn" onclick="toggleInlineReply('${c.id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  return wrap;
+}
+
+window.toggleInlineReply = (commentId) => {
+  const row = document.getElementById('rir_'+commentId);
+  if (!row) return;
+  const open = row.classList.toggle('show');
+  if (open) setTimeout(()=>document.getElementById('ri_'+commentId)?.focus(), 80);
 };
 
-window.cancelReply = (commentId) => {
-  document.getElementById('replyRow_'+commentId)?.classList.remove('show');
-  replyingTo = null;
-};
-
-window.postComment = async () => {
+window.postInlineComment = async (thoughtId) => {
   if (!user) { openAuth('in'); return; }
-  const input = document.getElementById('commentInput');
-  const text  = input.value.trim();
-  if (!text) return;
-  await addDoc(commentsCol, {
-    thoughtId: activeThoughtId, parentId: null,
-    text, ts: serverTimestamp(), owner: user.uid,
-    likes: 0, likedBy: []
-  });
-  await updateDoc(doc(db,'thoughts',activeThoughtId), { commentCount: increment(1) }).catch(()=>{});
-  // notify thought owner
-  const tSnap2 = await getDoc(doc(db,'thoughts',activeThoughtId));
-  if (tSnap2.exists()) sendNotif(tSnap2.data().owner, 'comment', `Someone commented on your thought: "${text.slice(0,60)}"`);
-  input.value = '';
-  toast('Comment posted!', 'ok');
-};
-
-window.submitReply = async (parentId) => {
-  if (!user) { openAuth('in'); return; }
-  const input = document.getElementById('replyIn_'+parentId);
+  const input = document.getElementById('cinput_'+thoughtId);
   const text  = input?.value.trim();
   if (!text) return;
-  await addDoc(commentsCol, {
-    thoughtId: activeThoughtId, parentId,
-    text, ts: serverTimestamp(), owner: user.uid,
-    likes: 0, likedBy: []
-  });
-  await updateDoc(doc(db,'thoughts',activeThoughtId), { commentCount: increment(1) }).catch(()=>{});
-  // notify the parent comment owner
-  const parentSnap = await getDoc(doc(db,'comments',parentId));
-  if (parentSnap.exists()) sendNotif(parentSnap.data().owner, 'reply', `Someone replied to your comment: "${text.slice(0,60)}"`);
-  input.value = '';
-  document.getElementById('replyRow_'+parentId)?.classList.remove('show');
-  replyingTo = null;
-  toast('Reply posted!', 'ok');
+  await addDoc(commentsCol, { thoughtId, parentId:null, text, ts:serverTimestamp(), owner:user.uid, likes:0, likedBy:[] });
+  await updateDoc(doc(db,'thoughts',thoughtId), { commentCount:increment(1) }).catch(()=>{});
+  const tSnap2 = await getDoc(doc(db,'thoughts',thoughtId));
+  if (tSnap2.exists()) sendNotif(tSnap2.data().owner,'comment',`Someone commented: "${text.slice(0,60)}"`);
+  if (input) input.value = '';
+};
+
+window.submitInlineReply = async (parentId, thoughtId) => {
+  if (!user) { openAuth('in'); return; }
+  const input = document.getElementById('ri_'+parentId);
+  const text  = input?.value.trim();
+  if (!text) return;
+  await addDoc(commentsCol, { thoughtId, parentId, text, ts:serverTimestamp(), owner:user.uid, likes:0, likedBy:[] });
+  await updateDoc(doc(db,'thoughts',thoughtId), { commentCount:increment(1) }).catch(()=>{});
+  const ps = await getDoc(doc(db,'comments',parentId));
+  if (ps.exists()) sendNotif(ps.data().owner,'reply',`Someone replied: "${text.slice(0,60)}"`);
+  document.getElementById('rir_'+parentId)?.classList.remove('show');
+  if (input) input.value = '';
 };
 
 window.likeComment = async (commentId) => {
@@ -1816,22 +1854,47 @@ window.likeComment = async (commentId) => {
   const ref  = doc(db,'comments',commentId);
   const snap = await getDoc(ref);
   if (!snap.exists()) return;
-  const data  = snap.data();
-  const liked = (data.likedBy||[]).includes(user.uid);
-  if (liked) {
-    await updateDoc(ref, { likes: increment(-1), likedBy: data.likedBy.filter(u=>u!==user.uid) });
-  } else {
-    await updateDoc(ref, { likes: increment(1),  likedBy: [...(data.likedBy||[]), user.uid] });
-  }
+  const d    = snap.data();
+  const liked = (d.likedBy||[]).includes(user.uid);
+  await updateDoc(ref, liked
+    ? { likes:increment(-1), likedBy:d.likedBy.filter(u=>u!==user.uid) }
+    : { likes:increment(1),  likedBy:[...(d.likedBy||[]),user.uid] }
+  );
 };
 
 function closeComments() {
-  document.getElementById('commentSheetBg').classList.remove('show');
-  document.getElementById('commentSheet').classList.remove('show');
-  if (unsubComments) { unsubComments(); unsubComments = null; }
-  activeThoughtId = null;
-  replyingTo      = null;
+  openCommentIds.forEach(id => {
+    const s = document.getElementById('comments_'+id);
+    if (s) s.classList.remove('open');
+    if (commentUnsubs[id]) { commentUnsubs[id](); delete commentUnsubs[id]; }
+  });
+  openCommentIds.clear();
 }
+
+/* ══════════════════════════════
+   NAV PANEL TOGGLE (one open at a time)
+══════════════════════════════ */
+function closeAllPanels() {
+  closeInbox();
+  closeNotifs();
+  closeSidebar();
+}
+
+window.togglePanel = (panel) => {
+  const panels = {
+    notif:   { open: openNotifs,   close: closeNotifs,   isOpen: () => document.getElementById('notifSidebar').classList.contains('show') },
+    msg:     { open: () => { switchInboxTab('requests'); document.getElementById('inboxSidebar').classList.add('show'); document.getElementById('msgTab').classList.add('active'); },
+               close: closeInbox,   isOpen: () => document.getElementById('inboxSidebar').classList.contains('show') },
+    profile: { open: openSidebar,  close: closeSidebar,  isOpen: () => document.getElementById('sidebar').classList.contains('show') },
+  };
+  const current = panels[panel];
+  if (!current) return;
+  const wasOpen = current.isOpen();
+  // close all panels first
+  closeAllPanels();
+  // if wasn't open, open it now
+  if (!wasOpen) current.open();
+};
 
 /* ── BACKDROP CLOSE & KEYBOARD ── */
 document.getElementById('authBg').addEventListener('click',   e=>{if(e.target.id==='authBg')   closeAuth();});
