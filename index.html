@@ -924,7 +924,6 @@ function makeCard(id, t) {
       <button class="rbtn ${myRx==='di'?'on-dislike':''}" onclick="doReact('${id}','di')">👎 <span class="n">${di}</span></button>
       <button class="donate-btn" onclick="openDonate('${id}')">💙 Donate</button>
       <button class="msg-btn" style="border-color:rgba(78,201,176,0.25);color:var(--cyan);" id="cmtbtn_${id}" onclick="toggleComments('${id}')">💬 <span id="cmtcount_${id}">${t.commentCount||0}</span></button>
-      ${!mine && t.owner ? `<button class="msg-btn" id="msgbtn_${id}" onclick="openMsgModal('${id}','${t.owner}')">✉ Message</button>` : ''}
       ${mine ? `<span class="views-chip">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         ${views} views
@@ -1722,9 +1721,12 @@ window.openDonate = (id) => {
 };
 
 function closeDonate() {
-  document.getElementById('donateBg').classList.remove('show');
+  const bg = document.getElementById('donateBg');
+  if (bg) bg.classList.remove('show');
   donateThoughtId = null;
+  pickedAmt = null;
 }
+window.closeDonate = closeDonate;
 
 async function sendDonate() {
   const custom = document.getElementById('customAmt').value;
