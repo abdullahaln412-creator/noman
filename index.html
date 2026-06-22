@@ -615,7 +615,24 @@ textarea::placeholder { color:var(--text3); }
 <!-- PROFILE SIDEBAR -->
 <div class="sidebar-bg" id="sbBg" onclick="closeSidebar()"></div>
 <div class="sidebar" id="sidebar">
-  <button class="sb-close" onclick="closeSidebar()">✕</button>
+
+  <!-- Header row: close + three-dot menu -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+    <span style="font-size:14px;font-weight:600;color:var(--text);">My Profile</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <!-- Three-dot menu -->
+      <div style="position:relative;" id="profileMenuWrap">
+        <button class="sb-close" style="position:static;font-size:18px;letter-spacing:2px;" onclick="toggleProfileMenu()" title="More options">⋯</button>
+        <div id="profileMenu" style="display:none;position:absolute;right:0;top:36px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r2);min-width:160px;z-index:10;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+          <button onclick="doLogout()" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:none;border:none;color:var(--red);font-family:inherit;font-size:13px;cursor:pointer;text-align:left;">
+            🚪 Sign out
+          </button>
+        </div>
+      </div>
+      <button class="sb-close" style="position:static;" onclick="closeSidebar()">✕</button>
+    </div>
+  </div>
+
   <div class="sb-avatar">🌀</div>
   <div class="sb-name">Anonymous Member</div>
   <div class="sb-email" id="sbEmail"></div>
@@ -626,7 +643,6 @@ textarea::placeholder { color:var(--text3); }
   </div>
   <div class="sb-section-title">Your thoughts</div>
   <div id="sbList"></div>
-  <div style="margin-top:20px;"><button class="btn btn-danger" style="width:100%;padding:9px;" onclick="doLogout()">Sign out</button></div>
 </div>
 
 <!-- INBOX SIDEBAR -->
@@ -890,7 +906,18 @@ function makeCard(id, t) {
       </span>
       <span class="card-time">${ago}</span>
     </div>
-    <div class="card-body">${esc(t.text||'')}</div>
+    <div class="card-body">
+      ${(()=>{
+        const words = (t.text||'').split(/\s+/);
+        if (words.length <= 200) return esc(t.text||'');
+        const preview = esc(words.slice(0,200).join(' '));
+        const rest    = esc(words.slice(200).join(' '));
+        return '<span>' + preview + '</span>'
+             + '<span id="tmore_${id}" style="display:none;"> ' + rest + '</span> '
+             + '<button onclick="toggleSeeMore(\'' + '${id}' + '\')" id="tmbtn_${id}" '
+             + 'style="background:none;border:none;color:var(--cyan);font-size:12px;cursor:pointer;font-family:inherit;padding:0;">… See more</button>';
+      })()}
+    </div>
     <div class="card-footer">
       <button class="rbtn ${myRx==='li'?'on-like':''}"    onclick="doReact('${id}','li')">👍 <span class="n">${li}</span></button>
       <button class="rbtn ${myRx==='lo'?'on-love':''}"    onclick="doReact('${id}','lo')">❤️ <span class="n">${lo}</span></button>
@@ -1577,9 +1604,34 @@ document.getElementById('chatInput').addEventListener('keydown', e => { if(e.key
 ══════════════════════════════ */
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  // also re-render feed to feel like a refresh
   if (typeof renderFeed === 'function') renderFeed();
 }
+
+/* ── See more / See less for long thoughts ── */
+window.toggleSeeMore = (id) => {
+  const more = document.getElementById('tmore_'+id);
+  const btn  = document.getElementById('tmbtn_'+id);
+  if (!more || !btn) return;
+  const isHidden = more.style.display === 'none';
+  more.style.display = isHidden ? '' : 'none';
+  btn.textContent    = isHidden ? 'See less' : '… See more';
+};
+
+/* ── Profile three-dot menu ── */
+window.toggleProfileMenu = () => {
+  const menu = document.getElementById('profileMenu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+};
+
+// close profile menu when clicking outside
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('profileMenuWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    const menu = document.getElementById('profileMenu');
+    if (menu) menu.style.display = 'none';
+  }
+});
 function timeAgo(d) {
   if (!d) return ''; const diff=Date.now()-d.getTime();
   const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);
@@ -1763,12 +1815,40 @@ function loadInlineComments(thoughtId) {
     if (countEl) countEl.textContent = comments.length;
     if (!comments.length) { listEl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px 0;">No comments yet.</div>'; return; }
     listEl.innerHTML = '';
-    for (const c of comments) {
+    const VISIBLE = 2;
+    for (let i = 0; i < Math.min(VISIBLE, comments.length); i++) {
+      const c = comments[i];
       const rSnap = await getDocs(query(commentsCol, where('parentId','==',c.id)));
       const replies = [];
       rSnap.forEach(d => replies.push({ id:d.id, ...d.data() }));
       replies.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
       listEl.appendChild(buildInlineComment(c, replies, thoughtId));
+    }
+    if (comments.length > VISIBLE) {
+      const remaining = comments.length - VISIBLE;
+      const moreWrap = document.createElement('div');
+      moreWrap.id = 'cmore_'+thoughtId;
+      moreWrap.style.display = 'none';
+      // render hidden comments
+      for (let i = VISIBLE; i < comments.length; i++) {
+        const c = comments[i];
+        const rSnap = await getDocs(query(commentsCol, where('parentId','==',c.id)));
+        const replies = [];
+        rSnap.forEach(d => replies.push({ id:d.id, ...d.data() }));
+        replies.sort((a,b) => (a.ts?.seconds||0) - (b.ts?.seconds||0));
+        moreWrap.appendChild(buildInlineComment(c, replies, thoughtId));
+      }
+      listEl.appendChild(moreWrap);
+      // See more button
+      const btn = document.createElement('button');
+      btn.id = 'cmorebtn_'+thoughtId;
+      btn.style.cssText = 'background:none;border:none;color:var(--cyan);font-size:12px;cursor:pointer;font-family:inherit;padding:4px 0;';
+      btn.textContent = `See ${remaining} more comment${remaining>1?'s':''}`;
+      btn.onclick = () => {
+        moreWrap.style.display = '';
+        btn.style.display = 'none';
+      };
+      listEl.appendChild(btn);
     }
   });
 }
