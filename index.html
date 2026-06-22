@@ -94,7 +94,7 @@ body { background:var(--bg0); color:var(--text); font-family:'Inter','Segoe UI',
 .btn:disabled { opacity:0.4; cursor:not-allowed; }
 
 /* PAGE */
-.page { max-width:620px; margin:0 auto; padding:24px 16px 80px; }
+.page { max-width:860px; margin:0 auto; padding:24px 24px 80px; }
 
 /* COMPOSE */
 .compose-wrap { background:var(--bg1); border:1px solid var(--bdr); border-radius:var(--r2); padding:16px; margin-bottom:24px; }
@@ -172,19 +172,19 @@ textarea::placeholder { color:var(--text3); }
 /* SIDEBARS */
 .sidebar-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; }
 .sidebar-bg.show { display:block; }
-.sidebar { position:fixed; top:0; right:0; bottom:0; width:320px; background:var(--bg1); border-left:1px solid var(--bdr2); z-index:201; overflow-y:auto; padding:24px 20px; transform:translateX(100%); transition:transform 0.25s ease; }
+.sidebar { position:fixed; top:0; right:0; bottom:0; width:420px; background:var(--bg1); border-left:1px solid var(--bdr2); z-index:201; overflow-y:auto; padding:28px 24px; transform:translateX(100%); transition:transform 0.25s ease; }
 .sidebar.show { transform:translateX(0); }
-.inbox-sidebar { position:fixed; top:0; left:0; bottom:0; width:340px; background:var(--bg1); border-right:1px solid var(--bdr2); z-index:201; overflow-y:auto; padding:24px 20px; transform:translateX(-100%); transition:transform 0.25s ease; }
+.inbox-sidebar { position:fixed; top:0; left:0; bottom:0; width:380px; background:var(--bg1); border-right:1px solid var(--bdr2); z-index:201; overflow-y:auto; padding:24px 20px; transform:translateX(-100%); transition:transform 0.25s ease; }
 .inbox-sidebar.show { transform:translateX(0); }
 .sb-close { position:absolute; top:16px; right:16px; background:var(--bg2); border:1px solid var(--bdr); color:var(--text2); width:28px; height:28px; border-radius:var(--r); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
 .sb-close:hover { color:var(--text); background:var(--bg3); }
-.sb-avatar { width:52px; height:52px; border-radius:50%; background:var(--bg3); border:1px solid var(--cyan-bdr); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:12px; }
+.sb-avatar { width:72px; height:72px; border-radius:50%; background:var(--bg3); border:2px solid var(--cyan-bdr); display:flex; align-items:center; justify-content:center; font-size:30px; margin-bottom:14px; }
 .sb-name { font-size:14px; font-weight:600; margin-bottom:2px; }
 .sb-email { font-size:12px; color:var(--text2); margin-bottom:20px; word-break:break-all; }
 .sb-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:20px; }
-.sb-stat { background:var(--bg2); border:1px solid var(--bdr); border-radius:var(--r); padding:10px; text-align:center; }
-.sb-stat .n { font-size:20px; font-weight:600; color:var(--cyan); }
-.sb-stat .l { font-size:10px; color:var(--text3); margin-top:2px; }
+.sb-stat { background:var(--bg2); border:1px solid var(--bdr); border-radius:var(--r); padding:14px; text-align:center; }
+.sb-stat .n { font-size:26px; font-weight:700; color:var(--cyan); }
+.sb-stat .l { font-size:11px; color:var(--text3); margin-top:4px; }
 .sb-section-title { font-size:11px; font-weight:500; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
 .sb-thought { background:var(--bg2); border:1px solid var(--bdr); border-radius:var(--r); padding:10px 12px; margin-bottom:8px; }
 .sb-thought-text { font-size:13px; color:var(--text); line-height:1.55; margin-bottom:8px; }
@@ -228,16 +228,18 @@ textarea::placeholder { color:var(--text3); }
 /* PROFILE MODAL */
 /* PROFILE PAGE */
 .profile-page {
-  display:none; position:fixed; inset:0; z-index:150;
-  background:var(--bg0); overflow-y:auto;
-  animation:rise 0.25s ease;
+  display:none; position:fixed; top:0; right:0; bottom:0;
+  width:420px; z-index:201; background:var(--bg1);
+  border-left:1px solid var(--bdr2);
+  overflow-y:auto; padding:24px;
+  transform:translateX(100%);
+  transition:transform 0.25s ease;
 }
-.profile-page.show { display:block; }
+.profile-page.show { display:block; transform:translateX(0); }
 .profile-page-nav {
-  position:sticky; top:0; background:rgba(30,30,30,0.95);
-  backdrop-filter:blur(10px); border-bottom:1px solid var(--bdr);
-  display:flex; align-items:center; gap:12px;
-  padding:0 20px; height:48px; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px; padding-bottom:16px;
+  border-bottom:1px solid var(--bdr);
 }
 .back-btn {
   background:transparent; border:none; color:var(--cyan);
@@ -245,7 +247,7 @@ textarea::placeholder { color:var(--text3); }
   gap:6px; font-family:inherit; padding:0;
 }
 .back-btn:hover { opacity:0.75; }
-.profile-page-body { max-width:620px; margin:0 auto; padding:28px 16px 80px; }
+.profile-page-body { padding:0; }
 .profile-hero {
   display:flex; align-items:center; gap:16px;
   margin-bottom:24px; padding-bottom:20px;
@@ -642,7 +644,7 @@ textarea::placeholder { color:var(--text3); }
 </div>
 
 <!-- NOTIFICATIONS PANEL -->
-<div class="inbox-sidebar" id="notifSidebar" style="border-right:1px solid var(--bdr2);">
+<div class="inbox-sidebar" id="notifSidebar">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
     <div style="font-size:15px;font-weight:600;">Notifications</div>
     <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="togglePanel('notif')">✕</button>
@@ -667,13 +669,11 @@ textarea::placeholder { color:var(--text3); }
   </div>
 </div>
 
-<!-- ANONYMOUS PROFILE PAGE -->
+<!-- ANONYMOUS PROFILE PANEL (right side) -->
 <div class="profile-page" id="profilePage">
   <div class="profile-page-nav">
-    <button class="back-btn" onclick="closeProfileModal()">
-      ← Back to feed
-    </button>
-    <span style="font-size:13px;color:var(--text2);">Anonymous Profile</span>
+    <span style="font-size:14px;font-weight:600;color:var(--text);">Anonymous Profile</span>
+    <button class="sb-close" style="position:static;width:28px;height:28px;" onclick="closeProfileModal()">✕</button>
   </div>
   <div class="profile-page-body">
 
@@ -1000,7 +1000,6 @@ document.getElementById('btnPost').onclick = async () => {
 async function openSidebar() {
   if (!user) { openAuth('in'); return; }
   document.getElementById('sbEmail').textContent = user.email;
-  document.getElementById('sbBg').classList.add('show');
   document.getElementById('sidebar').classList.add('show');
   document.getElementById('sbList').innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
 
@@ -1037,7 +1036,6 @@ async function openSidebar() {
   });
 }
 function closeSidebar() {
-  document.getElementById('sbBg').classList.remove('show');
   document.getElementById('sidebar').classList.remove('show');
   document.getElementById('btnProfile').classList.remove('active');
 }
@@ -1880,19 +1878,35 @@ function closeAllPanels() {
   closeSidebar();
 }
 
+// Left panels (inbox, notif) close each other but NOT the profile
+// Profile (right) is fully independent
 window.togglePanel = (panel) => {
-  const panels = {
-    notif:   { open: openNotifs,   close: closeNotifs,   isOpen: () => document.getElementById('notifSidebar').classList.contains('show') },
-    msg:     { open: () => { switchInboxTab('requests'); document.getElementById('inboxSidebar').classList.add('show'); document.getElementById('msgTab').classList.add('active'); },
-               close: closeInbox,   isOpen: () => document.getElementById('inboxSidebar').classList.contains('show') },
-    profile: { open: openSidebar,  close: closeSidebar,  isOpen: () => document.getElementById('sidebar').classList.contains('show') },
+  if (panel === 'profile') {
+    // independent right panel — just toggle
+    const isOpen = document.getElementById('sidebar').classList.contains('show');
+    if (isOpen) { closeSidebar(); }
+    else { openSidebar(); }
+    return;
+  }
+  // Left panels — close each other
+  const leftPanels = {
+    notif: {
+      open:   openNotifs,
+      close:  closeNotifs,
+      isOpen: () => document.getElementById('notifSidebar').classList.contains('show')
+    },
+    msg: {
+      open:   () => { switchInboxTab('requests'); document.getElementById('inboxSidebar').classList.add('show'); document.getElementById('msgTab').classList.add('active'); },
+      close:  closeInbox,
+      isOpen: () => document.getElementById('inboxSidebar').classList.contains('show')
+    },
   };
-  const current = panels[panel];
+  const current = leftPanels[panel];
   if (!current) return;
   const wasOpen = current.isOpen();
-  // close all panels first
-  closeAllPanels();
-  // if wasn't open, open it now
+  // close other left panels
+  Object.values(leftPanels).forEach(p => p.close());
+  // if wasn't open, open it
   if (!wasOpen) current.open();
 };
 
@@ -1901,7 +1915,7 @@ document.getElementById('authBg').addEventListener('click',   e=>{if(e.target.id
 document.getElementById('donateBg').addEventListener('click', e=>{if(e.target.id==='donateBg') closeDonate();});
 document.getElementById('msgBg').addEventListener('click',    e=>{if(e.target.id==='msgBg')    closeMsgModal();});
 document.getElementById('chatBg').addEventListener('click',   e=>{if(e.target.id==='chatBg')   closeChat();});
-document.getElementById('sbBg').addEventListener('click',     ()=>closeSidebar());
+// profile panel has no backdrop — it's a side panel
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape'){closeAuth();closeDonate();closeSidebar();closeInbox();closeNotifs();closeChat();closeMsgModal();closeComments();}
 });
